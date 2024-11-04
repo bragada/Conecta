@@ -1,4 +1,4 @@
-name: Run R Script with Cache
+name: Bases Ribeirão 
 
 on:
   workflow_dispatch:
