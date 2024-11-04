@@ -1,0 +1,65 @@
+name: Run R Script with Cache
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'  # Executar a cada 15 minutos
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configurar repositório
+      uses: actions/checkout@v2
+
+    - name: Configurar cache para pacotes R
+      uses: actions/cache@v3
+      with:
+        path: ~/.R/library
+        key: ${{ runner.os }}-R-package-cache-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-R-
+      env:
+        R_LIBS_USER: ~/.R/library
+
+    - name: Instalar dependências do sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev
+
+    - name: Instalar R
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y r-base
+
+    - name: Criar e configurar diretório de bibliotecas R
+      run: |
+        mkdir -p ~/.R/library
+        echo "R_LIBS_USER=~/.R/library" >> ~/.Renviron
+      env:
+        R_LIBS_USER: ~/.R/library
+
+    - name: Reinstalar stringi a partir da fonte
+      run: |
+        Rscript -e 'install.packages("stringi", type = "source")'
+      env:
+        R_LIBS_USER: ~/.R/library
+
+    - name: Definir variáveis de ambiente do AWS
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        TZ: ${{ secrets.TZ }}
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
+        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
+        echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.Renviron
+        echo "TZ=${TZ}" >> ~/.Renviron
+
+    - name: Executar script R
+      run: |
+        Rscript upload_api_rib.R
+      env:
+        R_LIBS_USER: ~/.R/library
