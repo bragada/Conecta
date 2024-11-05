@@ -626,7 +626,7 @@ sgi_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       atendimento_hora = hora_atendimento,
       prev_execucao_horas = previsao_execucao,
       status = no_prazo,
-      origem_da_ocorrencia = origem_ocorrencia,
+      origem_da_ocorrencia = origem_ocorrencia
       
     ) %>% 
     #select(-x1) %>% 
