@@ -95,11 +95,11 @@ at_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     select(no_atendimento, protocolo, tipo_de_ocorrencia, atendimento, motivo, lat, lon, nome_bairro, endereco, data_atendimento, hora_inicio, hora_conclusao, equipe, semana_marco, mes, hora, data_hora, dia_semana, semana) 
   
   
-  arrow::write_parquet(atendimentos, "tt_atendimento_rib.parquet")
+  arrow::write_parquet(atendimentos, "tt_atendimentos_rib.parquet")
   
   put_object(
-    file = "tt_atendimento_rib.parquet",
-    object = "tt_atendimento_rib.parquet",
+    file = "tt_atendimentos_rib.parquet",
+    object = "tt_atendimentos_rib.parquet",
     bucket = "automacao-conecta",
     region = 'sa-east-1'
   )
