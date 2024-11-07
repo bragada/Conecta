@@ -604,18 +604,20 @@ sgi_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   #  .[["RAIZ"]] %>%
   #  .[['ATENDIMENTOS']] %>%
   #  .[['ATENDIMENTO']] %>% clean_names()
-  
+  print("antes dados")
   dados <- fromJSON(content(response, "text")) %>% 
     .[["RAIZ"]] %>%
     .[[raiz_1]] %>%
     .[[raiz_2]]
-  
+    print("depois dados")
+
   
   if (length(dados) <= 10) {
     message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
     return(NULL)
   }
-  
+      print("antes sgi")
+
   sgi <- dados %>% 
     clean_names() %>% 
     select(
@@ -678,16 +680,18 @@ sgi_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         select(no_atendimento,equipe,status_at = atendimento) %>% 
         mutate(no_atendimento = as.character(no_atendimento))
       , by = c("atendimento" = "no_atendimento"))
-  
+  print('depois agi')
   arrow::write_parquet(sgi, "tt_sgi_atendimento_atendimentos_prazo_rib.parquet")
-  
+    print('antes put')
+
   put_object(
     file = "tt_sgi_atendimento_atendimentos_prazo_rib.parquet",
     object = "tt_sgi_atendimento_atendimentos_prazo_rib.parquet",
     bucket = "automacao-conecta",
     region = 'sa-east-1'
   )
-  
+      print('depois put')
+
 }
 
 sgi_rib_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
