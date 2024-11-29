@@ -3,7 +3,7 @@ name: Ribeirão
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *'  # Executar a cada 15 minutos
+    - cron: '*/55 * * * *'  # Executar a cada 15 minutos
 
 jobs:
   build:
