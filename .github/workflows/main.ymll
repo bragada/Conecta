@@ -60,6 +60,6 @@ jobs:
 
     - name: Executar script R
       run: |
-        Rscript upload_api_rib.R
+        Rscript teste_lib.R
       env:
         R_LIBS_USER: ~/.R/library
