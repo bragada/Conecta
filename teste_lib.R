@@ -11,7 +11,7 @@ library(arrow)
 
 
 `%!in%` <- Negate(`%in%`) 
-print('vamo vê o que vai dar")
+print("vamo vê o que vai dar")
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
