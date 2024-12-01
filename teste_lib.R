@@ -9,13 +9,12 @@ library(tidyverse)
 library(aws.s3)
 library(arrow)
 
-
 `%!in%` <- Negate(`%in%`) 
 print("vamo vê o que vai dar")
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
-  credenciais <- paste0(USERNAME, ":", PASSWORD) %>%
+  credenciais <- paste0(${USERNAME}, ":", ${PASSWORD}) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
