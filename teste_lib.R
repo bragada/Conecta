@@ -309,3 +309,111 @@ osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
 )
 print('  Ocorrencias/Solicitacoes - Ok')   
 # ----
+
+
+# Painel Ocorrências ----
+p_oc_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+  
+corpo_requisicao <- list(
+  CMD_IDS_PARQUE_SERVICO = 2,
+  CMD_DENTRO_DE_AREA = -1,
+  auth_token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
+)
+   response <- POST(
+     url,
+     add_headers(
+      `Authorization` = credenciais,
+      `Accept-Encoding` = "gzip"
+    ),
+      body = corpo_requisicao,
+      encode = "json"
+  )
+  
+  dados <- fromJSON(content(response, "text"))
+  if (status_code(response) != 200) {
+    print("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
+    return(NULL)
+  } 
+  
+  
+  dados <- fromJSON(content(response, "text")) %>% 
+    .[["RAIZ"]] %>%
+    .[[raiz_1]] %>%
+    .[[raiz_2]]
+  
+  
+  if (length(dados) <= 3) {
+    print("A base de dados contém 10 ou menos observações. Não será feito o upload.")
+    return(NULL)
+  }
+  
+  osp <- s3read_using(FUN = arrow::read_parquet,
+                      object = "tt_osp.parquet",
+                      bucket = "automacao-conecta"
+  )
+  
+  p_oc <- dados %>% 
+    clean_names() %>% 
+    select(
+      protocolo = numero_protocolo ,
+      tipo_de_ocorrencia = desc_tipo_origem_ocorrencia,
+      #limite_atendimento,
+      bairro = nome_bairro,
+      endereco = endereco_livre,
+      id_ocorrencia,
+      data_reclamacao,
+      endereco_livre = nome_logradouro_completo,
+      data_limite_atendimento,
+      hora_limite_atendimento,
+      latitude_total,
+      longitude_total,
+      possui_atendimento_anterior,
+      quant_solicitacoes_vinculadas
+    ) %>% 
+    mutate(
+      limite_atendimento =  as.POSIXct(strptime(paste(data_limite_atendimento,hora_limite_atendimento),"%d/%m/%Y %H:%M")),
+      data_limite_para_atendimento = limite_atendimento,
+      #recebida =  as.POSIXct(strptime(recebida,"%d/%m/%Y %H:%M")),
+      data_limite = limite_atendimento,
+      dif = as.numeric(round(difftime(data_limite, as.POSIXct(Sys.time(),"GMT"),units = "hours"),0)),
+      data_reclamacao = as.Date(data_reclamacao,"%d/%m/%Y"),
+      data_limite_atendimento = as.Date(data_limite_atendimento,"%d/%m/%Y"),
+      dias_prazo = as.numeric(data_limite_atendimento - Sys.Date()),
+      atrasado = ifelse(dias_prazo < 0, "Atrasada","No Prazo"),
+      lat=as.numeric(str_replace(latitude_total,",",".")),
+      lon=as.numeric(str_replace(longitude_total,",","."))) %>% 
+    #rename(lat=latitude_total,lon=longitude_total)  %>% 
+    mutate(
+      cor_atraso = case_when(
+        dias_prazo >= 0 ~ "darkgreen",
+        TRUE ~ "red"
+      )) %>% 
+    left_join(
+      osp,by = c("protocolo","id_ocorrencia")
+    ) %>% 
+    select(-tipo_de_ocorrencia) %>% 
+    rename(tipo_de_ocorrencia = tipo_ocorrencia)
+  
+  
+  
+  arrow::write_parquet(p_oc, "tt_painel_ocorrencias.parquet")
+  
+  put_object(
+    file = "tt_painel_ocorrencias.parquet",
+    object = "tt_painel_ocorrencias.parquet",
+    bucket = "automacao-conecta",
+    region = 'sa-east-1'
+  )
+  
+}
+
+p_oc_extrai_json_api(nome = "Painel de Ocorrências",
+                     raiz_1 = "PONTOS_SERVICO",
+                     raiz_2 = "PONTO_SERVICO",
+                     url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/PaineldeOcorrencias.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+print(' Painel Ocorrências - Ok')
+
+# ----
+
+
+
