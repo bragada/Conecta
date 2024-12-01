@@ -307,7 +307,7 @@ osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
                     raiz_2 = "OCORRENCIA_SOLICITACAO",
                     url = paste0("https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=SOLICITACAO_PONTO_SERVICO&CMD_STATUS=PENDENTES&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=",format(Sys.Date()-90,"%d/%m/%Y"),"&CMD_DATA_FIM=",format(Sys.Date(),"%d/%m/%Y"),"&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
 )
-print('  Ocorrencias/Solicitacoes - Ok')   
+print('Ocorrencias/Solicitacoes - Ok')   
 # ----
 
 
