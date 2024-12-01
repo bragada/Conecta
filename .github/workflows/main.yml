@@ -52,8 +52,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         TZ: ${{ secrets.TZ }}
-        USERNAME: ${{secrets.USERNAME}}
-        PASSWORD: ${{secrets.PASSWORD}}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
