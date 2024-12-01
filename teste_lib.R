@@ -28,9 +28,10 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
   response <- POST(
      url,
-     `Authorization` = credenciais,
-     `Accept-Encoding` = "gzip"
-      ),
+     add_headers(
+      `Authorization` = credenciais,
+      `Accept-Encoding` = "gzip"
+    ),
       body = corpo_requisicao,
       encode = "json"
   )
@@ -117,7 +118,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     file = "tt_atendimentos.parquet",
     object = "tt_atendimentos.parquet",
     bucket = "automacao-conecta",
-    region = 'sa-east-1'
+    region = "sa-east-1"
   )
   
 }
