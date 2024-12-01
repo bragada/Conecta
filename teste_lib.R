@@ -15,7 +15,7 @@ print("vamo vê o que vai dar")
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
-  credenciais <- paste0(usarename, ":", password) %>%
+  credenciais <- paste0(username, ":", password) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
