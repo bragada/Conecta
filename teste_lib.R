@@ -140,8 +140,8 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 corpo_requisicao <- list(
   CMD_ID_STATUS_SOLICITACAO = -1,
   CMD_ID_PARQUE_SERVICO = "1,2",
-  CMD_DATA_RECLAMACAO="01/03/2023",
-  CMD_APENAS_EM_ABERTO=0
+  CMD_DATA_RECLAMACAO = "01/03/2023",
+  CMD_APENAS_EM_ABERTO = 0
 )
 
   response <- POST(
@@ -178,7 +178,6 @@ corpo_requisicao <- list(
            data_reclamacao,
            status = desc_status_solicitacao,
            tempo_restante = desc_prazo_restante,
-           data_reclamacao,
            id_ocorrencia,
            possui_atendimento_anterior,
            endereco_livre_solicitacao,
@@ -200,7 +199,7 @@ corpo_requisicao <- list(
              mes == 9 ~ "Setembro",
              mes == 10 ~ "Outubro",
              mes == 11 ~ "Novembro",
-             mes == 12 ~ "Dezembro",
+             mes == 12 ~ "Dezembro"
            ),
            mes = factor(mes,levels = c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")),
            dia_semana = wday(data_reclamacao,label = T),
