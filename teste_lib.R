@@ -163,7 +163,8 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         .[[raiz_1]] %>%
         .[[raiz_2]]
     
-    
+    glimpse(dados)
+      
     if (length(dados) <= 10) {
         message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
         return(NULL)
