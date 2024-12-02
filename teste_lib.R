@@ -163,13 +163,8 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         .[[raiz_1]] %>%
         .[[raiz_2]]
     
-    glimpse(dados)
-      
-    if (length(dados) <= 10) {
-        message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-        return(NULL)
-    }
-    
+
+ 
     solicitacoes <- dados %>% 
         clean_names() %>%
         select(protocolo = numero_protocolo,
@@ -441,10 +436,7 @@ if (status_code(response) != 200) {
     .[[raiz_2]]
   
   
-  if (length(dados) <= 3) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
-  }
+
   
   p_moni <- dados %>% 
     clean_names() %>%
@@ -684,11 +676,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     .[[raiz_1]] %>%
     .[[raiz_2]]
   
-  
-  if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
-  }
+
   
   sgi <- dados %>% 
     clean_names() %>% 
