@@ -137,7 +137,7 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     
     corpo_requisicao <- list(
         CMD_ID_STATUS_SOLICITACAO = -1,
-        CMD_ID_PARQUE_SERVICO = "1,2",
+        CMD_IDS_PARQUE_SERVICO = "1,2",
         CMD_DATA_RECLAMACAO = "01/03/2023",
         CMD_APENAS_EM_ABERTO = 0
     )
