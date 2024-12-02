@@ -654,8 +654,8 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
    
     corpo_requisicao <- list(
         CMD_ID_PARQUE_SERVICO = 2,
-        CMD_DATA_INICIAL_FILTRO = "01/01/2023",
-        CMD_DATA_FINAL_FILTRO = "01/01/2030",
+        CMD_DATA_INICIAL_FILTRO = "01/01/2021",
+        CMD_DATA_FINAL_FILTRO = "01/01/2040",
         CMD_ID_SEM_REGIAO = -1,
         CMD_DETALHADO = 1,
         CMD_CONFIRMADOS = 1
@@ -702,8 +702,6 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       origem_da_ocorrencia = origem_ocorrencia,
       
     ) %>% 
-    #select(-x1) %>% 
-    #slice(-1) %>% 
     mutate(prazo = as.Date(prazo,"%d/%m/%Y"),
            data_atendimento = as.Date(data_atendimento,"%d/%m/%Y"),
            mes = month(data_atendimento),
@@ -766,7 +764,7 @@ sgi_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
                     raiz_1 = "ATENDIMENTOS",
                     raiz_2 = "ATENDIMENTO",
                     url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPrazosAtendimento.json?CMD_ID_PARQUE_SERVICO=2&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
-print('  ATENDIMENTO QUANTO AO PRAZO  - Ok')                
+print('ATENDIMENTO QUANTO AO PRAZO  - Ok')                
 
 # ----
 
