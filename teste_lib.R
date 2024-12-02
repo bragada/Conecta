@@ -35,7 +35,6 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       encode = "json"
   )
   
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -144,7 +143,7 @@ corpo_requisicao <- list(
   CMD_APENAS_EM_ABERTO = 0
 )
 
-  response <- POST(
+ response <- POST(
      url,
      add_headers(
       `Authorization` = credenciais,
@@ -154,7 +153,6 @@ corpo_requisicao <- list(
       encode = "json"
   )
   
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -261,7 +259,6 @@ corpo_requisicao <- list(
       encode = "json"
   )
   
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -330,7 +327,6 @@ corpo_requisicao <- list(
       encode = "json"
   )
   
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     print("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -433,8 +429,8 @@ p_moni_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       body = corpo_requisicao,
       encode = "json"
   )  
-  dados <- fromJSON(content(response, "text"))
-  if (status_code(response) != 200) {
+
+if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
   } 
@@ -527,7 +523,6 @@ corpo_requisicao <- list(
   )  
 
       
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -607,7 +602,6 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   )  
 
   
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -680,7 +674,6 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     )
 
       
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -799,7 +792,6 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   )  
 
       
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
@@ -916,7 +908,6 @@ corpo_requisicao <- list(
       body = corpo_requisicao,
       encode = "json"
   )    
-  dados <- fromJSON(content(response, "text"))
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
