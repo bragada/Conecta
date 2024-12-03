@@ -787,11 +787,11 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     .[["RAIZ"]] %>%
     .[[raiz_1]] %>%
     .[[raiz_2]]
-  dados <- fromJSON(content( GET('https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs', add_headers(`Accept-Encoding` = "gzip"))
-                             , "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[['PONTOS_MODERNIZACAO']] %>%
-    .[['PONTO_MODERNIZACAO']]
+  #dados <- fromJSON(content( GET('https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs', add_headers(`Accept-Encoding` = "gzip"))
+  #                           , "text")) %>% 
+  #  .[["RAIZ"]] %>%
+  #  .[['PONTOS_MODERNIZACAO']] %>%
+  #  .[['PONTO_MODERNIZACAO']]
   
   
   if (length(dados) <= 10) {
@@ -921,7 +921,7 @@ corpo_requisicao <- list(
   arrow::write_parquet(obras, "tt_obras.parquet")
   
   put_object(
-    file = "tt_mod_materiais.parquet",
+    file = "tt_obras.parquet",
     object = "tt_obras.parquet",
     bucket = "automacao-conecta",
     region = 'sa-east-1'
