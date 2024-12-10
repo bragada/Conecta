@@ -764,7 +764,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   corpo_requisicao <- list(
   CMD_IDS_PARQUE_SERVICO = 2,
   CMD_MODERNIZACAO = 2,
-  CMD_TIPO_CALCULO = 0
+  CMD_TIPO_CALCULO = 1
 )
   response <- POST(
      url,
@@ -869,7 +869,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 mod_extrai_json_api(nome = "Modernizados",
                     raiz_1 = "PONTOS_MODERNIZACAO",
                     raiz_2 = "PONTO_MODERNIZACAO",
-                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
+                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
 )
 print('  PONTOS MODERNIZADOS   - Ok')                
 
