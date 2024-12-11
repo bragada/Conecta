@@ -348,7 +348,7 @@ corpo_requisicao <- list(
     select(
       protocolo = numero_protocolo ,
       tipo_de_ocorrencia = desc_tipo_ocorrencia,
-      origem_ocorrencia = desc_tipo_origem_ocorrencia
+      origem_ocorrencia = desc_tipo_origem_ocorrencia,
       #limite_atendimento,
       bairro = nome_bairro,
       endereco = endereco_livre,
