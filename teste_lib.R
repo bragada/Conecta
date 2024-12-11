@@ -499,7 +499,7 @@ os_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 corpo_requisicao <- list(
   CMD_ID_STATUS_ORDEM_SERVICO = -1,
-  CMD_DATA = "01/01/2021",
+  CMD_DATA_INICIAL = "01/01/2023",
   CMD_ID_PARQUE_SERVICO = 2
 )
       
@@ -567,7 +567,7 @@ corpo_requisicao <- list(
 os_extrai_json_api(nome = "Ordens de Serviço",
                    raiz_1 = "ORDENS_SERVICO",
                    raiz_2 = "ORDEM_SERVICO",
-                   url="https://conectacampinas.exati.com.br/guia/command/conectacampinas/Ordensdeservico.json?CMD_ID_STATUS_ORDEM_SERVICO=-1&CMD_DATA=01/01/2021&CMD_ID_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                   url="https://conectacampinas.exati.com.br/guia/command/conectacampinas/Ordensdeservico.json?CMD_ID_STATUS_ORDEM_SERVICO=-1&CMD_DATA_INICIAL=01/01/2023&CMD_ID_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
 print(' Ordens de Serviço - Ok')
 
 # ----
