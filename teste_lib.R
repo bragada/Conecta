@@ -379,12 +379,12 @@ corpo_requisicao <- list(
       cor_atraso = case_when(
         dias_prazo >= 0 ~ "darkgreen",
         TRUE ~ "red"
-      )) %>% 
-    left_join(
-      osp,by = c("protocolo","id_ocorrencia")
-    ) %>% 
-    select(-tipo_de_ocorrencia) %>% 
-    rename(tipo_de_ocorrencia = tipo_ocorrencia)
+      )) #%>% 
+    #left_join(
+    #  osp,by = c("protocolo","id_ocorrencia")
+    #) %>% 
+    #select(-tipo_de_ocorrencia) %>% 
+    #rename(tipo_de_ocorrencia = tipo_ocorrencia)
   
   
   
