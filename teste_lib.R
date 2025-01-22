@@ -218,9 +218,9 @@ corpo_requisicao <- list(
          ),
       cor_vencimento = case_when(
            prazo_restante <= 0  ~  "darkred",
-           prazo_restante > 0 & dif <= 24 ~  "red",
-           prazo_restante > 24 & dif <= 48 ~  "orange",
-           dif > 48 ~  "olivedrab"
+           prazo_restante > 0 & prazo_restante <= 24 ~  "red",
+           prazo_restante > 24 & prazo_restante <= 48 ~  "orange",
+           prazo_restante > 48 ~  "olivedrab"
          ),
          semana = week(data_reclamacao) - week(floor_date(data_reclamacao,"month")) +1) 
 
