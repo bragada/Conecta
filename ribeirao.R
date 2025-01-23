@@ -14,7 +14,6 @@ credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_
 
 `%!in%` <- Negate(`%in%`) 
 print(credenciais_rib)
-print(credenciais)
 
 
 
