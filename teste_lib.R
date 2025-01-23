@@ -8,6 +8,9 @@ library(janitor)
 library(tidyverse)
 library(aws.s3)
 library(arrow)
+credenciais_rib <- paste0(Sys.getenv("henrique.bragada"), ":", Sys.getenv("Ihavemacbook13?")) %>%
+      base64_enc() %>% 
+      paste("Basic", .)
 
 credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
       base64_enc() %>% 
@@ -19,9 +22,6 @@ credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
 
 
 
-credenciais_rib <- paste0(Sys.getenv("henrique.bragada"), ":", Sys.getenv("Ihavemacbook13?")) %>%
-      base64_enc() %>% 
-      paste("Basic", .)
 
 at_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
