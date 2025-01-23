@@ -7,13 +7,13 @@ library(janitor)
 library(tidyverse)
 library(aws.s3)
 library(arrow)
-credenciais_rib <- paste0("henrique.bragada", ":", "Ihavemacbook13?") %>%
-      base64_enc() %>% 
-      paste("Basic", .)
+#credenciais_rib <- paste0("henrique.bragada", ":", "Ihavemacbook13?") %>%
+#      base64_enc() %>% 
+#      paste("Basic", .)
 
 
 `%!in%` <- Negate(`%in%`) 
-print(credenciais_rib)
+#print(credenciais_rib)
 
 ###########################################################################################################
 
