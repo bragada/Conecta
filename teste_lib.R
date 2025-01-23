@@ -12,7 +12,7 @@ credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_
       base64_enc() %>% 
       paste("Basic", .)
 
-credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("Ihavemacbook13?")) %>%
+credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
