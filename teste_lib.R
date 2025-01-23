@@ -41,7 +41,7 @@ corpo_requisicao <- list(
       body = corpo_requisicao,
       encode = "json"
   )
-  
+  print(response)
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
