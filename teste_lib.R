@@ -8,16 +8,13 @@ library(janitor)
 library(tidyverse)
 library(aws.s3)
 library(arrow)
-credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_RIB")) %>%
-      base64_enc() %>% 
-      paste("Basic", .)
+
 
 credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
 `%!in%` <- Negate(`%in%`) 
-print(credenciais_rib)
 print(credenciais)
 
 
