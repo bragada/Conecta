@@ -61,7 +61,7 @@ corpo_requisicao <- list(
   }
   
   atendimentos <- dados %>% 
-  clean_names() %>% 
+  janitor::clean_names() %>% 
   select(-endereco) %>% 
   rename(endereco = nome_logradouro,
          lat = latitude_total_ponto,
