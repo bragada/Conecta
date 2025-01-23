@@ -54,6 +54,8 @@ jobs:
         TZ: ${{ secrets.TZ }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
+        USERNAME_RIB: ${{ secrets.USERNAME_RIB }}
+        PASSWORD_RIB: ${{ secrets.PASSWORD_RIB }}
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -61,6 +63,14 @@ jobs:
         echo "TZ=${TZ}" >> ~/.Renviron
         echo "USERNAME=${USERNAME}" >> ~/.Renviron
         echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
+        echo "USERNAME=${USERNAME_RIB}" >> ~/.Renviron
+        echo "PASSWORD=${PASSWORD_RIB}" >> ~/.Renviron
+    - name: Executar script R
+      run: |
+        Rscript ribeirao.R
+      env:
+        R_LIBS_USER: ~/.R/library
+
     - name: Executar script R
       run: |
         Rscript teste_lib.R
