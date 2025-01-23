@@ -28,7 +28,6 @@ credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_
       base64_enc() %>% 
       paste("Basic", .)
 
-print(credenciais_rib)
 
 at_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
@@ -48,14 +47,12 @@ corpo_requisicao <- list(
       body = corpo_requisicao,
       encode = "json"
   )
-  print(response)
       
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
     return(NULL)
   } 
   
-  print(fromJSON(content(response, "text")))
   dados <- fromJSON(content(response, "text")) %>% 
     .[["RAIZ"]] %>%
     .[[raiz_1]] %>%
