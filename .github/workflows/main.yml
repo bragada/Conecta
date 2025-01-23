@@ -63,8 +63,8 @@ jobs:
         echo "TZ=${TZ}" >> ~/.Renviron
         echo "USERNAME=${USERNAME}" >> ~/.Renviron
         echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
-        echo "USERNAME=${USERNAME_RIB}" >> ~/.Renviron
-        echo "PASSWORD=${PASSWORD_RIB}" >> ~/.Renviron
+        echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
+        echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
     - name: Executar script Rib R
       run: |
         Rscript ribeirao.R
