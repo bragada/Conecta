@@ -169,7 +169,7 @@ corpo_requisicao <- list(
         .[[raiz_1]] %>%
         .[[raiz_2]]
     
-
+dados %>% glimpse
  
     solicitacoes <- dados %>% 
         clean_names() %>%
@@ -221,7 +221,7 @@ corpo_requisicao <- list(
            prazo_restante > 48 ~  "olivedrab"
          ),
          semana = week(data_reclamacao) - week(floor_date(data_reclamacao,"month")) +1) 
-
+solicitacoes %>% glimpse
     
     arrow::write_parquet(solicitacoes, "tt_solicitacoes_rib.parquet")
     
