@@ -28,6 +28,8 @@ credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_
       base64_enc() %>% 
       paste("Basic", .)
 
+print(credenciais_rib)
+
 at_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
