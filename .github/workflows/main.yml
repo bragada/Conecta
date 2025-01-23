@@ -61,13 +61,13 @@ jobs:
         echo "TZ=${TZ}" >> ~/.Renviron
         echo "USERNAME=${USERNAME}" >> ~/.Renviron
         echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
-    - name: Executar script R
-      run: |
-        Rscript teste_lib.R
-      env:
-        R_LIBS_USER: ~/.R/library
     - name: Executar script Ribeirao R
       run: |
         Rscript ribeirao.R
+      env:
+        R_LIBS_USER: ~/.R/library
+    - name: Executar script R
+      run: |
+        Rscript teste_lib.R
       env:
         R_LIBS_USER: ~/.R/library
