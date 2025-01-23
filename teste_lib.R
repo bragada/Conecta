@@ -8,7 +8,7 @@ library(janitor)
 library(tidyverse)
 library(aws.s3)
 library(arrow)
-credenciais_rib <- paste0(Sys.getenv("henrique.bragada"), ":", Sys.getenv("Ihavemacbook13?")) %>%
+credenciais_rib <- paste0(Sys.getenv("USERNAME_RIB"), ":", Sys.getenv("PASSWORD_RIB")) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
