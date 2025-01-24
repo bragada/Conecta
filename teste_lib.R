@@ -235,76 +235,76 @@ print('Solicitações - Ok')
 
 
 # Ocorrencias/Solicitacoes Pendentes Realizadas ----
-osp_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+#osp_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
   
-corpo_requisicao <- list(
-  CMD_ID_PARQUE_SERVICO = "[1,2]",
-  CMD_AGRUPAMENTO = "SOLICITACAO_PONTO_SERVICO",
-  CMD_STATUS = "PENDENTES",
-  CMD_ORIGEM_ATENDIMENTO = "TODOS",
-  CMD_TIPO_SOLICITACAO = "TODOS",
-  CMD_DATA_INICIO = format(Sys.Date() - 90, "%d/%m/%Y"),
-  CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
-)
+#corpo_requisicao <- list(
+  #CMD_ID_PARQUE_SERVICO = "[1,2]",
+  #CMD_AGRUPAMENTO = "SOLICITACAO_PONTO_SERVICO",
+  #CMD_STATUS = "PENDENTES",
+  #CMD_ORIGEM_ATENDIMENTO = "TODOS",
+  #CMD_TIPO_SOLICITACAO = "TODOS",
+  #CMD_DATA_INICIO = format(Sys.Date() - 90, "%d/%m/%Y"),
+ # CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
+#)
       
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )
+ # response <- POST(
+ #    url,
+ #    add_headers(
+ #     `Authorization` = credenciais,
+ #     `Accept-Encoding` = "gzip"
+ #   ),
+ #     body = corpo_requisicao,
+ #     encode = "json"
+ # )
   
-  if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  #if (status_code(response) != 200) {
+  #  message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
+  #  return(NULL)
+  #} 
   
   
-  if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
-  }
-  
-  osp <<- dados %>% 
-    clean_names() %>% 
-    select(id_ocorrencia=id_ocorrencia,
-           protocolo = numero_protocolo,
-           tipo_ocorrencia = desc_tipo_ocorrencia,
-           status = descricao_status,
-           origem_ocorrencia = desc_tipo_origem_ocorrencia,
-           prioridade = sigla_prioridade_ponto_ocorr) %>% 
-    distinct()
+  #dados <- fromJSON(content(response, "text")) %>% 
+   # .[["RAIZ"]] %>%
+   # .[[raiz_1]] %>%
+   # .[[raiz_2]]
   
   
+  #if (length(dados) <= 10) {
+    #message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
+    #return(NULL)
+  #}
+  
+  #osp <<- dados %>% 
+  #  clean_names() %>% 
+  #  select(id_ocorrencia=id_ocorrencia,
+  #         protocolo = numero_protocolo,
+  #         tipo_ocorrencia = desc_tipo_ocorrencia,
+  #         status = descricao_status,
+  #         origem_ocorrencia = desc_tipo_origem_ocorrencia,
+  #         prioridade = sigla_prioridade_ponto_ocorr) %>% 
+  #  distinct()
   
   
-  arrow::write_parquet(osp, "tt_osp.parquet")
+  
+  
+ # arrow::write_parquet(osp, "tt_osp.parquet")
   #
-  put_object(
-    file = "tt_osp.parquet",
-    object = "tt_osp.parquet",
-    bucket = "automacao-conecta",
-    region = 'sa-east-1'
-  )
+ # put_object(
+ #   file = "tt_osp.parquet",
+ #   object = "tt_osp.parquet",
+ #   bucket = "automacao-conecta",
+ #   region = 'sa-east-1'
+ # )
   
-}
+#}
 
-osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
-                    raiz_1 = "OCORRENCIAS_SOLICITACOES",
-                    raiz_2 = "OCORRENCIA_SOLICITACAO",
-                    url = paste0("https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=SOLICITACAO_PONTO_SERVICO&CMD_STATUS=PENDENTES&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=",format(Sys.Date()-90,"%d/%m/%Y"),"&CMD_DATA_FIM=",format(Sys.Date(),"%d/%m/%Y"),"&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
-)
-print('Ocorrencias/Solicitacoes - Ok')   
+#osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
+#                    raiz_1 = "OCORRENCIAS_SOLICITACOES",
+#                    raiz_2 = "OCORRENCIA_SOLICITACAO",
+#                    url = paste0("https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=SOLICITACAO_PONTO_SERVICO&CMD_STATUS=PENDENTES&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=",format(Sys.Date()-90,"%d/%m/%Y"),"&CMD_DATA_FIM=",format(Sys.Date(),"%d/%m/%Y"),"&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+#)
+#print('Ocorrencias/Solicitacoes - Ok')   
 # ----
 
 
