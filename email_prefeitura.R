@@ -1,4 +1,8 @@
-pacman::p_load(aws.s3,googledrive,googlesheets4,tidyverse,gmailr,rmarkdown,blastula,keyring)
+install.packages("blastula")
+install.packages("rmarkdown")
+
+library(tidyverse)
+library(rmarkdown)
 
 
 render_relatorio <- rmarkdown::render(
