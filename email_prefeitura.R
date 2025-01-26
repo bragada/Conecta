@@ -4,6 +4,7 @@ install.packages("rmarkdown")
 library(tidyverse)
 library(rmarkdown)
 
+rmarkdown::pandoc_version()
 
 render_relatorio <- rmarkdown::render(
   input = "script_relatorio.Rmd",
