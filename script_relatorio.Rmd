@@ -15,6 +15,15 @@ header-includes:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(aws.s3,tidyverse,janitor,kableExtra,knitr,googledrive,googlesheets4)
+
+library(aws.s3)
+library(tidyverse)
+library(janitor)
+library(kableExtra)
+library(knitr)
+#library(googledrive)
+library(googlesheets4)
+
 ```
 
 ```{r,eval=F, echo=F, out.width="100%"}
