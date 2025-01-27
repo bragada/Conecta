@@ -59,6 +59,7 @@ jobs:
         PASSWORD: ${{ secrets.PASSWORD }}
         USERNAME_RIB: ${{ secrets.USERNAME_RIB }}
         PASSWORD_RIB: ${{ secrets.PASSWORD_RIB }}
+        GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -68,6 +69,7 @@ jobs:
         echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
         echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
         echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
+        echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
     - name: Baixar credenciais do S3
       run: |
         aws s3 cp s3://automacao-conecta/credenciais_gmail_api.json ./credenciais_gmail_api.json
