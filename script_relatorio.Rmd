@@ -72,9 +72,9 @@ p_moni <-   s3read_using(FUN = arrow::read_parquet,
 obras <- s3read_using(FUN = arrow::read_parquet,
                       object = "tt_obras.parquet",
                       bucket = "automacao-conecta") 
-
+Sys.getenv("GMAIL_AUTH")
 # AUTH
-gs4_auth_configure(path = "email_auth.json")
+  gs4_auth_configure(path = "email_auth.json")
 
 # URL
 url <- "https://docs.google.com/spreadsheets/d/1-aZzIFBEa91UAz1_D6PtI-nyl-fDmTqrLiBv_F2fiBI/edit?gid=1623874226#gid=1623874226"
