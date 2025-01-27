@@ -70,6 +70,16 @@ jobs:
         echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
         echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
         echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
+    - name: Configurar autenticação do Google Sheets
+      run: |
+           echo "${{ secrets.GMAIL_AUTH }}" > service_account.json
+    - name: Executar email_prefeitura.R
+      run: |
+        Rscript email_prefeitura.R
+
+    - name: Executar script_relatorio.R
+      run: |
+        Rscript script_relatorio.R
     - name: Ribeirão 
       run: |
         Rscript ribeirao.R
