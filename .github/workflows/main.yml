@@ -70,7 +70,7 @@ jobs:
         echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
     - name: Baixar credenciais do S3
       run: |
-        aws s3 cp s3://meu-bucket/credentials.json ./credentials.json
+        aws s3 cp s3://automacao-conecta/credenciais_gmail_api.json ./credenciais_gmail_api.json
       env:
         R_LIBS_USER: ~/.R/library
     - name: Email Prefeitura
