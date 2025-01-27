@@ -79,7 +79,7 @@ gs4_auth(email = "hkbragada@gmail.com")
 # URL
 url <- "https://docs.google.com/spreadsheets/d/1-aZzIFBEa91UAz1_D6PtI-nyl-fDmTqrLiBv_F2fiBI/edit?gid=1623874226#gid=1623874226"
 
-gs4_auth(path = "credenciais_gmail_api.json")
+#gs4_auth(path = "credenciais_gmail_api.json")
 
 # GET SHEET
 sheet_prog <- gs4_get(url) 
