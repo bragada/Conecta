@@ -70,11 +70,9 @@ jobs:
         echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
         echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
         echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
-    - name: Configurar autenticação do Google Sheets
+    - name: Setup Google Sheets authentication
       run: |
-        echo "${{ secrets.GMAIL_AUTH }}" | base64 -d > email_auth.json
-        Rscript -e "library(googlesheets4); gs4_auth(path = 'email_auth.json')"
-        rm email_auth.json
+        echo "${{ secrets.GMAIL_AUTH }}" > email_auth.json
     - name: Email Prefeitura
       run: |
         Rscript email_prefeitura.R
