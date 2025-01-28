@@ -15,10 +15,8 @@ credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
       paste("Basic", .)
 
 `%!in%` <- Negate(`%in%`) 
-print(credenciais)
 
 
-print("vamo vê o que vai dar")
 
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
