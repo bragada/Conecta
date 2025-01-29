@@ -74,7 +74,8 @@ obras <- s3read_using(FUN = arrow::read_parquet,
                       bucket = "automacao-conecta") 
 Sys.getenv("GMAIL_AUTH")
 # AUTH
-gs4_auth(path = "service_account.json")
+#gs4_auth(path = "service_account.json")
+gs4_deauth()
 # URL
 url <- "https://docs.google.com/spreadsheets/d/1-aZzIFBEa91UAz1_D6PtI-nyl-fDmTqrLiBv_F2fiBI/edit?gid=1623874226#gid=1623874226"
 
