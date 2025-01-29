@@ -27,6 +27,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev
+    - name: Instalar TinyTeX
+      run: |
+        Rscript -e 'tinytex::install_tinytex()'
+
     - name: Instalar Pandoc
       run: |
         sudo apt-get install -y pandoc
