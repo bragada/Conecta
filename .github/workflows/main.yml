@@ -53,7 +53,11 @@ jobs:
     - name: Instalar TinyTeX
       run: |
         Rscript -e 'tinytex::install_tinytex()'
-
+    - name: Reinstalar keyring
+      run: |
+        Rscript -e 'install.packages("keyring")'
+      env:
+        R_LIBS_USER: ~/.R/library
     - name: Definir variáveis de ambiente do AWS
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
