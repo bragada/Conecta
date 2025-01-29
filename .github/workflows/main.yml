@@ -27,10 +27,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev
-    - name: Instalar TinyTeX
-      run: |
-        Rscript -e 'tinytex::install_tinytex()'
-
+        
     - name: Instalar Pandoc
       run: |
         sudo apt-get install -y pandoc
@@ -52,6 +49,10 @@ jobs:
         Rscript -e 'install.packages("stringi", type = "source")'
       env:
         R_LIBS_USER: ~/.R/library
+        
+    - name: Instalar TinyTeX
+      run: |
+        Rscript -e 'tinytex::install_tinytex()'
 
     - name: Definir variáveis de ambiente do AWS
       env:
