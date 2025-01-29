@@ -1,11 +1,12 @@
 install.packages("blastula")
 install.packages("rmarkdown")
 install.packages("keyring")
+library(keyring)
+
 library(tidyverse)
 library(rmarkdown)
 library(blastula)
 rmarkdown::pandoc_version()
-library(keyring)
 render_relatorio <- rmarkdown::render(
   input = "script_relatorio.Rmd",
   output_file = "program_conecta_campinas.pdf"
