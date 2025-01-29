@@ -27,7 +27,7 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   
   email <- email %>%
     add_attachment(
-      file = "script_relatorio.pdf",  # Nome do arquivo que será anexado
+      file = "program_conecta_campinas.pdf",  # Nome do arquivo que será anexado
       content_type = "application/pdf"  # Tipo de arquivo anexado
     )
   
