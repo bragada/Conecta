@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 install.packages("kableExtra")
 install.packages("knitr")
 install.packages("googlesheets4")
+install.packages("zoo")
 
 library(aws.s3)
 library(tidyverse)
@@ -26,6 +27,7 @@ library(kableExtra)
 library(knitr)
 #library(googledrive)
 library(googlesheets4)
+library(zoo)
 
 ```
 
