@@ -1,6 +1,7 @@
 install.packages("blastula")
 install.packages("rmarkdown")
-
+install.packages("tinytex")
+tinytex::install_tinytex()
 library(tidyverse)
 library(rmarkdown)
 
