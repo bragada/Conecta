@@ -2,7 +2,7 @@ install.packages("blastula")
 install.packages("rmarkdown")
 library(tidyverse)
 library(rmarkdown)
-
+library(blastula)
 rmarkdown::pandoc_version()
 
 render_relatorio <- rmarkdown::render(
