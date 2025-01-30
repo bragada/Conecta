@@ -2,6 +2,7 @@ install.packages("blastula")
 install.packages("rmarkdown")
 install.packages("keyring")
 library(keyring)
+Sys.getenv("GMAIL_AUTH")
 
 library(tidyverse)
 library(rmarkdown)
