@@ -34,14 +34,13 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
     )
   
   destinatarios <- c("rikibragada@gmail.com")
-  
   # 4. Envio do email com as credenciais armazenadas
   email %>%
     smtp_send(
       from = "hkbragada@gmail.com",
       to = destinatarios,  
       subject = "Programação Conecta - Prefeitura",  
-      credentials = creds_key(id = "gmail") 
+      credentials =  creds_file("gmail_auth.json")
     )
 
 } else {
