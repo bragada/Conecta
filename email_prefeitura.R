@@ -40,7 +40,7 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
       from = "hkbragada@gmail.com",
       to = destinatarios,  
       subject = "Programação Conecta - Prefeitura",  
-      credentials =  creds_file("gmail_auth.json")
+      credentials =  creds_file("email_auth.json")
     )
 
 } else {
