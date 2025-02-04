@@ -4,6 +4,9 @@ install.packages("keyring")
 library(keyring)
 Sys.getenv("GMAIL_AUTH")
 
+print(print(list.files()))
+print(Sys.getenv("GMAIL_AUTH"))
+
 library(tidyverse)
 library(rmarkdown)
 library(blastula)
