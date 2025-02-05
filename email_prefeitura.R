@@ -9,8 +9,8 @@ library(blastula)
 
 Sys.getenv("GMAIL_AUTH")
 
-smtp_user <- Sys.getenv("smtp_user")
-smtp_pass <- Sys.getenv("SMTP_PASS")
+SMPT_USER <- Sys.getenv("SMPT_USER")
+SMTP_PASS <- Sys.getenv("SMTP_PASS")
 
 
 rmarkdown::pandoc_version()
@@ -43,11 +43,11 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   # 4. Envio do email com as credenciais armazenadas
   smtp_send(
     email = email,
-    from = smtp_user,
+    from = SMPT_USER,
     to = destinatarios,
     subject = "Programação Conecta - Prefeitura",
     credentials = creds_envvar(
-      user = smtp_user,
+      user = SMPT_USER,
       pass_envvar = "SMTP_PASS",
       host = "smtp.gmail.com",
       port = 465,
