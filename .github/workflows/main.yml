@@ -69,8 +69,8 @@ jobs:
         USERNAME_RIB: ${{ secrets.USERNAME_RIB }}
         PASSWORD_RIB: ${{ secrets.PASSWORD_RIB }}
         GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
-        smtp_user : ${{ secrets.smtp_user  }}
-        smtp_pass : ${{ secrets.smtp_pass  }}
+        SMTP_USER: ${{ secrets.SMTP_USER }}
+        SMTP_PASS: ${{ secrets.SMTP_PASS }}
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -81,8 +81,8 @@ jobs:
         echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
         echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
         echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
-        echo "smtp_user=${smtp_user}" >> ~/.Renviron
-        echo "smtp_pass=${smtp_pass}" >> ~/.Renviron
+        echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
+        echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
     - name: prefeitura 
       run: |
         Rscript email_prefeitura.R
