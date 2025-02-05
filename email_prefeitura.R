@@ -11,8 +11,6 @@ Sys.getenv("GMAIL_AUTH")
 
 smtp_user <- Sys.getenv("smtp_user")
 smtp_pass <- Sys.getenv("smtp_pass")
-smtp_host <- Sys.getenv("smtp_host")
-smtp_port <- as.numeric(Sys.getenv("smtp_port"))
 
 
 rmarkdown::pandoc_version()
@@ -51,8 +49,8 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
     credentials = creds_envvar(
       user = smtp_user,
       pass_envvar = "smtp_pass",
-      host = smtp_host,
-      port = smtp_port,
+      host = "smtp.gmail.com",
+      port = 465,
       use_ssl = TRUE
     )
   )
