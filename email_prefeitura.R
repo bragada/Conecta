@@ -9,7 +9,7 @@ library(blastula)
 
 Sys.getenv("GMAIL_AUTH")
 
-SMPT_USER <- Sys.getenv("SMPT_USER")
+SMTP_USER <- Sys.getenv("SMTP_USER")
 SMTP_PASS <- Sys.getenv("SMTP_PASS")
 
 
@@ -43,11 +43,11 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   # 4. Envio do email com as credenciais armazenadas
   smtp_send(
     email = email,
-    from = SMPT_USER,
+    from = SMTP_USER,
     to = destinatarios,
     subject = "Programação Conecta - Prefeitura",
     credentials = creds_envvar(
-      user = SMPT_USER,
+      user = SMTP_USER,
       pass_envvar = SMTP_PASS,
       host = "smtp.gmail.com",
       port = 465,
