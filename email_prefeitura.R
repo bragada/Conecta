@@ -32,7 +32,7 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
 
 smtp <- server(
   host = "smtp.gmail.com",
-  port = 465,
+  port = 587,
   username = Sys.getenv("SMTP_USER"),
   password = Sys.getenv("SMTP_PASS"),
   use_ssl = TRUE  # Habilita SSL
