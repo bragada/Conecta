@@ -11,6 +11,8 @@ library(blastula)
 library(emayili)
 Sys.getenv("GMAIL_AUTH")
 
+print(Sys.getenv("SMTP_USER"))
+print(Sys.getenv("SMTP_PASS"))
 
 
 rmarkdown::pandoc_version()
