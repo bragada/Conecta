@@ -32,7 +32,8 @@ smtp <- server(
   host = "smtp.gmail.com",
   port = 587,
   username = Sys.getenv("SMTP_USER"),
-  password = Sys.getenv("SMTP_PASS")
+  password = Sys.getenv("SMTP_PASS"),
+  use_ssl = TRUE  # Habilita SSL
 )
 
 # Criar o email e anexar o arquivo temporário
