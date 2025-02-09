@@ -49,7 +49,7 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
     subject = "Programação Conecta - Prefeitura",
     credentials = creds_envvar(
       user = SMTP_USER,
-      pass_envvar = Sys.getenv("SMTP_PASS"),
+      pass_envvar = "SMTP_PASS",
       host = "smtp.gmail.com",
       port = 587,
       use_ssl = TRUE
