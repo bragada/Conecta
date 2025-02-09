@@ -8,7 +8,7 @@ library(keyring)
 library(tidyverse)
 library(rmarkdown)
 library(blastula)
-
+library(emayili)
 Sys.getenv("GMAIL_AUTH")
 
 
