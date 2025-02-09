@@ -3,6 +3,7 @@ if (!requireNamespace("emayili", quietly = TRUE)) install.packages("emayili")
 if (!requireNamespace("keyring", quietly = TRUE)) install.packages("keyring")
 if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
 if (!requireNamespace("blastula", quietly = TRUE)) install.packages("blastula")
+if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
 
 library(keyring)
 library(tidyverse)
