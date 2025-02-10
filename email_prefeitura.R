@@ -45,6 +45,7 @@ email <- envelope() %>%
 
   Bot - HK CONSULTORIA") %>%
   attachment(path = "program_conecta_campinas.pdf")
+Sys.sleep(5)  # Espera 5 segundos antes do envio
 
 # Enviar o email
 smtp(email, verbose = TRUE)
