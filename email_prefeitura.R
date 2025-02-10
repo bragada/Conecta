@@ -12,6 +12,7 @@ library(rmarkdown)
 library(blastula)
 library(emayili)
 Sys.getenv("GMAIL_AUTH")
+packageVersion("emayili")  # Verifique se é a versão mais recente
 
 rmarkdown::pandoc_version()
 render_relatorio <- rmarkdown::render(
