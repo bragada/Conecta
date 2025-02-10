@@ -13,10 +13,6 @@ library(blastula)
 library(emayili)
 Sys.getenv("GMAIL_AUTH")
 
-print(Sys.getenv("SMTP_USER"))
-print(Sys.getenv("SMTP_PASS"))
-
-
 rmarkdown::pandoc_version()
 render_relatorio <- rmarkdown::render(
   input = "script_relatorio.Rmd",
@@ -40,7 +36,7 @@ smtp <- server(
 
 # Criar o email e anexar o arquivo temporário
 email <- envelope() %>%
-  from("rikibragada@gmail.com") %>%
+  from("hkbragada@gmail.com") %>%
   to("rikibragada@gmail.com") %>%
   subject("Programação Conecta - Prefeitura") %>%
   text("Bom dia,  
