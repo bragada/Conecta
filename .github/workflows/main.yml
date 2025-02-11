@@ -83,6 +83,7 @@ jobs:
         echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
         echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
         echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
+        echo "$GMAIL_AUTH" > gmail_credentials.json
     - name: Prefeitura 
       run: |
         Rscript email_prefeitura.R
