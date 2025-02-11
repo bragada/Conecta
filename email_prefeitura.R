@@ -11,6 +11,8 @@ if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
 #library(keyring)
 library(tidyverse)
 library(rmarkdown)
+library(gmailr)
+
 #library(blastula)
 #library(emayili)
 #Sys.getenv("GMAIL_AUTH")
