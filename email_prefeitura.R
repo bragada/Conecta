@@ -38,18 +38,7 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   }else {
 print("n")}
 
- gm_auth_configure(path = "gmail_credentials.json")
-gm_auth(scopes = "https://mail.google.com/")
 
-# Criar e enviar um e-mail
-email <- gm_mime() %>%
-  gm_to("rikibragda@gmail.com") %>%
-  gm_from("hkbragada@gmail.com") %>%
-  gm_subject("Teste de e-mail via GitHub Actions") %>%
-  gm_text_body("Este é um e-mail enviado automaticamente pelo GitHub Actions usando a API do Gmail.")
-
-# Enviar o e-mail
-gm_send_message(email)
 
 
 #smtp <- server(
