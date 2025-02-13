@@ -87,10 +87,10 @@ url <- "https://docs.google.com/spreadsheets/d/1-aZzIFBEa91UAz1_D6PtI-nyl-fDmTqr
 #gs4_auth(path = "credenciais_gmail_api.json")
 
 # GET SHEET
-sheet_prog <- gs4_get(url) 
+sheet_prog <- suppressMessages(gs4_get(url)) 
 
 # DADOS SHEET
-dados_sheet <- read_sheet(sheet_prog,sheet = "Prog") %>% 
+dados_sheet <- suppressMessages(read_sheet(sheet_prog,sheet = "Prog")) %>% 
   filter(rowSums(is.na(.)) != ncol(.)) %>% 
   zoo::na.locf() %>% 
   mutate(Data = as.Date(Data))
