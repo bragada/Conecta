@@ -53,7 +53,7 @@ knitr::include_graphics("logo.png")
 
 # P_MONI
 p_moni <-   s3read_using(FUN = arrow::read_parquet,
-               object = "painel_monitoramento.parquet",
+               object = "tt_painel_monitoramento.parquet",
                bucket = "automacao-conecta"
   ) %>%
   filter(tipo_de_ocorrencia %in% c(
