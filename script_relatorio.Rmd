@@ -75,7 +75,6 @@ p_moni <-   s3read_using(FUN = arrow::read_parquet,
 obras <- s3read_using(FUN = arrow::read_parquet,
                       object = "tt_obras.parquet",
                       bucket = "automacao-conecta") 
-Sys.getenv("GMAIL_AUTH")
 # AUTH
 #gs4_auth(path = "service_account.json")
 #gs4_deauth()
