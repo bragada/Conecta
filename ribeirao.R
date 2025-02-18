@@ -1,10 +1,3 @@
-if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
-if (!requireNamespace("base64enc", quietly = TRUE)) install.packages("base64enc")
-if (!requireNamespace("httr", quietly = TRUE)) install.packages("httr")
-if (!requireNamespace("jsonlite", quietly = TRUE)) install.packages("jsonlite")
-if (!requireNamespace("janitor", quietly = TRUE)) install.packages("janitor")
-if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
-if (!requireNamespace("arrow", quietly = TRUE)) install.packages("arrow")
 
 
 library(base64enc)
