@@ -1,13 +1,18 @@
+if (!require(base64enc)) { install.packages("base64enc", repos = "https://cloud.r-project.org/"); library(base64enc) }
+if (!require(httr)) { install.packages("httr", repos = "https://cloud.r-project.org/"); library(httr) }
+if (!require(jsonlite)) { install.packages("jsonlite", repos = "https://cloud.r-project.org/"); library(jsonlite) }
+if (!require(janitor)) { install.packages("janitor", repos = "https://cloud.r-project.org/"); library(janitor) }
+if (!require(tidyverse)) { install.packages("tidyverse", repos = "https://cloud.r-project.org/"); library(tidyverse) }
+if (!require(aws.s3)) { install.packages("aws.s3", repos = "https://cloud.r-project.org/"); library(aws.s3) }
+if (!require(arrow)) { install.packages("arrow", repos = "https://cloud.r-project.org/"); library(arrow) }
 
-
-library(base64enc)
-
-library(httr)
-library(jsonlite)
-library(janitor)
-library(tidyverse)
-library(aws.s3)
-library(arrow)
+#library(base64enc)
+#library(httr)
+#library(jsonlite)
+#library(janitor)
+#library(tidyverse)
+#library(aws.s3)
+#library(arrow)
 #credenciais_rib <- paste0("henrique.bragada", ":", "Ihavemacbook13?") %>%
 #      base64_enc() %>% 
 #      paste("Basic", .)
