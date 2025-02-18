@@ -51,9 +51,7 @@ jobs:
       env:
         R_LIBS_USER: ~/.R/library
         
-    - name: Instalar TinyTeX
-      run: |
-        Rscript -e 'tinytex::install_tinytex()'
+
     - name: Reinstalar keyring
       run: |
         Rscript -e 'install.packages("keyring")'
