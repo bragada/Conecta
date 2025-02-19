@@ -56,7 +56,7 @@ corpo_requisicao <- list(
       
   if (status_code(response) != 200) {
     message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    return(status_code(response))
   } 
   
   dados <- fromJSON(content(response, "text")) %>% 
