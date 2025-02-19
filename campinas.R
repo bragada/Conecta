@@ -549,6 +549,9 @@ corpo_requisicao <- list(
       total_pontos,
       total_atendidos
     ) %>% 
+        mutate(total_pontos = as.numeric(total_pontos),
+           total_atendidos = as.numeric(total_atendidos)
+              ) %>% 
     mutate(data= as.POSIXct(strptime(data,"%d/%m/%Y %H:%M")),
            prazo = as.numeric(str_replace(prazo,",",".")),
            tarefas_finalizadas = paste0(total_atendidos,"/",total_pontos),
