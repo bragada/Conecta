@@ -97,7 +97,8 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install sendgrid
-        
+
+   
     - name: Executar script Python para envio de e-mail
       run: |
         python send_email.py
