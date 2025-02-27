@@ -70,6 +70,8 @@ jobs:
         GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
         SMTP_USER: ${{ secrets.SMTP_USER }}
         SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        EMAIL_API: ${{ secrets.EMAIL_API }}
+
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -83,6 +85,18 @@ jobs:
         echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
         echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
         echo "$GMAIL_AUTH" > gmail_credentials.json
+        echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
+
+    - name: Instalar Python mais recente
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+    
+    - name: Executar script Python para envio de e-mail
+      run: |
+        python3 send_email.py
+
+        
     - name: Prefeitura 
       run: |
         Rscript email_prefeitura.R
