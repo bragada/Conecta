@@ -17,4 +17,4 @@ email = Mail(
 )
 
 # Enviando o e-mail
-response = conta_sendgrid.send(email
+response = conta_sendgrid.send(email)
