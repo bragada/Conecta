@@ -3,7 +3,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
 # Pegando a chave da variável de ambiente
-chave_api = os.environ.get("EMAIL_API")
+chave_api = os.getenv("EMAIL_API")
 
 # Criando a conta do SendGrid
 conta_sendgrid = SendGridAPIClient(chave_api)
