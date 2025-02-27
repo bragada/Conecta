@@ -86,23 +86,7 @@ jobs:
         echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
         echo "$GMAIL_AUTH" > gmail_credentials.json
         echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
-        
-
-    - name: Instalar Python mais recente
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.13'
-        
-    - name: Instalar dependências Python
-      run: |
-        pip install --upgrade pip
-        pip install sendgrid
-
-   
-    - name: Executar script Python para envio de e-mail
-      run: |
-        python send_email.py
-        
+           
     
         
     - name: Prefeitura 
