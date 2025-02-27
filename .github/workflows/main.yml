@@ -92,9 +92,10 @@ jobs:
       with:
         python-version: '3.13'
     
-    - name: Executar script Python para envio de e-mail
+    - name: Instalar dependências Python
       run: |
-        python3 send_email.py
+        pip install --upgrade pip
+        pip install sendgrid
 
         
     - name: Prefeitura 
