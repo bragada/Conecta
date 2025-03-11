@@ -22,10 +22,8 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
   corpo_requisicao <- list(
-    CMD_ID_STATUS_SOLICITACAO=-1,
-    CMD_IDS_PARQUE_SERVICO="1,2",
-    CMD_DATA_RECLAMACAO="01/03/2023",
-    CMD_APENAS_EM_ABERTO=0
+        CMD_IDS_PARQUE_SERVICO="2",
+        CMD_DATA_INICIO="01/03/2023"
     )
 
   response <- POST(
@@ -128,7 +126,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 at_extrai_json_api(nome = "Atendimentos",
                    raiz_1 = "PONTOS_ATENDIDOS",
                    raiz_2 = "PONTO_ATENDIDO",
-                   url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarAtendimentoPontoServico.json?CMD_ID_PARQUE_SERVICO=2&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
+                   url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarAtendimentoPontoServico.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
 ) 
 print('Atendimentos - Ok')
 
@@ -310,9 +308,10 @@ print('Solicitações - Ok')
 p_oc_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
 corpo_requisicao <- list(
-  CMD_IDS_PARQUE_SERVICO = 2,
-  CMD_DENTRO_DE_AREA = -1,
-  auth_token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
+  CMD_ID_STATUS_SOLICITACAO = -1,
+  CMD_IDS_PARQUE_SERVICO = "1,2",
+  CMD_DATA_RECLAMACAO = "01/03/2023",
+  CMD_APENAS_EM_ABERTO = 0
 )
    response <- POST(
      url,
@@ -405,7 +404,7 @@ corpo_requisicao <- list(
 p_oc_extrai_json_api(nome = "Painel de Ocorrências",
                      raiz_1 = "PONTOS_SERVICO",
                      raiz_2 = "PONTO_SERVICO",
-                     url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/PaineldeOcorrencias.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                     url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/PaineldeOcorrencias.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Painel Ocorrências - Ok')
 
 # ----
@@ -415,7 +414,10 @@ print(' Painel Ocorrências - Ok')
 p_moni_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
   corpo_requisicao <- list(
-    CMD_ID_PARQUE_SERVICO = 2
+        CMD_ID_STATUS_SOLICITACAO = -1,
+        CMD_IDS_PARQUE_SERVICO = "1,2",
+        CMD_DATA_RECLAMACAO = "01/03/2023",
+        CMD_APENAS_EM_ABERTO = 0
   )
       
   response <- POST(
@@ -492,7 +494,7 @@ if (status_code(response) != 200) {
 p_moni_extrai_json_api(nome = "Painel de Monitoramento",
                        raiz_1 = "PONTOS_SERVICO",
                        raiz_2 = "PONTO_SERVICO",
-                       url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosServicoOcorrenciaAndamentoEquipe.json?CMD_ID_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                       url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosServicoOcorrenciaAndamentoEquipe.json?CMD_IDS_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Painel Monitoramento - Ok')
 
 # ----
@@ -574,7 +576,7 @@ corpo_requisicao <- list(
 os_extrai_json_api(nome = "Ordens de Serviço",
                    raiz_1 = "ORDENS_SERVICO",
                    raiz_2 = "ORDEM_SERVICO",
-                   url="https://conectacampinas.exati.com.br/guia/command/conectacampinas/Ordensdeservico.json?CMD_ID_STATUS_ORDEM_SERVICO=-1&CMD_DATA_INICIAL=01/01/2023&CMD_ID_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                   url="https://conectacampinas.exati.com.br/guia/command/conectacampinas/Ordensdeservico.json?CMD_DATA_INICIAL=01/01/2023&CMD_IDS_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Ordens de Serviço - Ok')
 
 # ----
@@ -646,7 +648,7 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 oa_extrai_json_api(nome = "Ocorrências Autorizar",
                    raiz_1 = "PONTOS_SERVICO",
                    raiz_2 = "PONTO_SERVICO",
-                   url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasAutorizar.json?CMD_IDS_PARQUE_SERVICO=2&CMD_PAINEL_NOVO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                   url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasAutorizar.json?CMD_ID_PARQUE_SERVICO=2&CMD_PAINEL_NOVO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzM5Mzg2MDQ4LCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.dngF6qc31is6RSLvSeBjGxcU8GqvoMtGdQqPJTZNDoI")
 print('  Ocorrências Autorizar  - Ok')                
 # ----
 # ATENDIMENTO QUANTO AO PRAZO ----
@@ -759,7 +761,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 sgi_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
                     raiz_1 = "ATENDIMENTOS",
                     raiz_2 = "ATENDIMENTO",
-                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPrazosAtendimento.json?CMD_ID_PARQUE_SERVICO=2&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPrazosAtendimento.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print('ATENDIMENTO QUANTO AO PRAZO  - Ok')                
 
 # ----
@@ -876,7 +878,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 mod_extrai_json_api(nome = "Modernizados",
                     raiz_1 = "PONTOS_MODERNIZACAO",
                     raiz_2 = "PONTO_MODERNIZACAO",
-                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTczMzg2MTIzMSwib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.GYt6atErBMWQfgs2yAA3gNTfXWW9dZ_m6DapyGqe8zo"
+                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_MODERNIZACAO=3&CMD_AGRUPAMENTO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTc0MTMwODExNSwib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.kqtz1rMiFi_fYv8sAjQ66wXh3gddF3mCiPIojxz-oZ8"
 )
 print('  PONTOS MODERNIZADOS   - Ok')                
 
@@ -939,7 +941,7 @@ corpo_requisicao <- list(
 obras_extrai_json_api(nome = "Obras",
                       raiz_1 = "OBRAS",
                       raiz_2 = "OBRA",
-                      url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarObras.json?CMD_OBRAS_ATRASADAS=0&CMD_ID_PARQUE_SERVICO=1,2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs"
+                      url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarObras.json?CMD_OBRAS_ATRASADAS=0&CMD_IDS_PARQUE_SERVICO=1,2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
 )
 print('  Obras - Ok')     
 
