@@ -143,7 +143,7 @@ corpo_requisicao <- list(
 at_rib_extrai_json_api(nome = "Atendimentos",
                    raiz_1 = "PONTOS_ATENDIDOS",
                    raiz_2 = "PONTO_ATENDIDO",
-                   url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/ConsultarAtendimentoPontoServico.json?CMD_IDS_PARQUE_SERVICO=1&CMD_DATA_INICIO=01/01/2021&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjQzIiwiaWF0IjoxNzI5NjM5MjcxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.P1X55Bd9nD9ZxW__ocjTTrGW3qOX68b6CoxiUuKbrz8"
+                   url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/ConsultarAtendimentoPontoServico.json?CMD_IDS_PARQUE_SERVICO=1&CMD_DATA_INICIO=01/01/2021&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiI1NDYiLCJpYXQiOjE3NDAwMDExMDgsIm9yaWdpbiI6IkdVSUEtU0VSVklDRSJ9.EFHZUk-DUxOID9a9_3qT0x91tetGRiRv7bZScoqUAOE"
 ) 
 print('Atendimentos Rib - Ok')
 
@@ -357,7 +357,7 @@ corpo_requisicao <- list(
 p_oc_rib_extrai_json_api(nome = "Painel de Ocorrências",
                      raiz_1 = "PONTOS_SERVICO",
                      raiz_2 = "PONTO_SERVICO",
-                     url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/PaineldeOcorrencias.json?CMD_IDS_PARQUE_SERVICO=1&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjQzIiwiaWF0IjoxNzI5NjM5MjcxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.P1X55Bd9nD9ZxW__ocjTTrGW3qOX68b6CoxiUuKbrz8")
+                     url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/PaineldeOcorrencias.json?CMD_ID_PARQUE_SERVICO=1&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiI1NDYiLCJpYXQiOjE3NDAwMDExMDgsIm9yaWdpbiI6IkdVSUEtU0VSVklDRSJ9.EFHZUk-DUxOID9a9_3qT0x91tetGRiRv7bZScoqUAOE")
 print(' Painel Ocorrências Rib- Ok')
 
 # ----
@@ -446,7 +446,7 @@ if (status_code(response) != 200) {
 p_moni_rib_extrai_json_api(nome = "Painel de Monitoramento",
                        raiz_1 = "PONTOS_SERVICO",
                        raiz_2 = "PONTO_SERVICO",
-                       url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/ConsultarPontosServicoOcorrenciaAndamentoEquipe.json?CMD_ID_PARQUE_SERVICO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjQzIiwiaWF0IjoxNzI5NjM5MjcxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.P1X55Bd9nD9ZxW__ocjTTrGW3qOX68b6CoxiUuKbrz8")
+                       url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/PaineldeOcorrencias.json?CMD_ID_PARQUE_SERVICO=1&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiI1NDYiLCJpYXQiOjE3NDAwMDExMDgsIm9yaWdpbiI6IkdVSUEtU0VSVklDRSJ9.EFHZUk-DUxOID9a9_3qT0x91tetGRiRv7bZScoqUAOE")
 print(' Painel Monitoramento Rib- Ok')
 
 # ----
@@ -540,7 +540,7 @@ corpo_requisicao <- list(
 sgi_rib_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
                     raiz_1 = "ATENDIMENTOS",
                     raiz_2 = "ATENDIMENTO",
-                    url = "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/ConsultarPrazosAtendimento.json?CMD_ID_PARQUE_SERVICO=1&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjQzIiwiaWF0IjoxNzI5NjM5MjcxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.P1X55Bd9nD9ZxW__ocjTTrGW3qOX68b6CoxiUuKbrz8")
+                    url = "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/ConsultarPrazosAtendimento.json?CMD_IDS_PARQUE_SERVICO=1&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiI1NDYiLCJpYXQiOjE3NDAwMDExMDgsIm9yaWdpbiI6IkdVSUEtU0VSVklDRSJ9.EFHZUk-DUxOID9a9_3qT0x91tetGRiRv7bZScoqUAOE")
 print('ATENDIMENTO QUANTO AO PRAZO Rib - Ok')                
 
 # ----
