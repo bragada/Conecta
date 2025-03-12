@@ -811,24 +811,48 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   mod <- dados %>% 
     clean_names() %>% 
     select(
-      etiqueta = id_ponto_servico,
-      data_mod = data_ultima_mod,                                      
-      hora = hora_ultima_mod,                                           
-      equipe = equipe_ultima_mod,                              
-      endereco,                                   
-      lat = latitude,                                      
-      lon = longitude,                                       
-      potencia_da_lampada_ultima_modernizacao = potencia_lampada_atual,
-      tipo_de_lampada_anterior = tipo_lampada_anterior,                
-      potencia_da_lampada_anterior = potencia_lampada_anterior,    
-      quantidade_ultima_modernizacao = quantidade_ultima_mod,        
-      quantidade_anterior,                                            
-      tipo_anterior,                                                 
-      desc_item_anterior,                                             
-      cod_item_anterior,                                              
-      tipo_atual,                                                     
-      desc_item_atual,                                               
-      cod_item_atual                                                  
+    
+    etiqueta = id_ponto_servico,
+    data_mod = data_ultima_mod,                                      
+    hora = hora_ultima_mod,                                           
+    equipe = equipe_ultima_mod,                              
+    endereco,                                   
+    lat = latitude,                                      
+    lon = longitude,                                       
+    potencia_da_lampada_ultima_modernizacao = potencia_lampada_atual,
+    tipo_de_lampada_anterior = tipo_lampada_anterior,                
+    potencia_da_lampada_anterior = potencia_lampada_anterior,    
+    quantidade_ultima_modernizacao = quantidade_ultima_mod,        
+    quantidade_anterior,                                            
+    tipo_anterior = tipo_lampada_anterior,                                                 
+    desc_item_anterio = desc_itens_last4,                                             
+    cod_item_anterior = cod_itens_last4,                                              
+    tipo_atual = desc_itens_last5,                                                     
+    desc_item_atual = desc_itens_last5,                                               
+    cod_item_atual  =   cod_itens_last5   
+
+
+
+          
+ 
+#etiqueta = id_ponto_servico,
+#data_mod = data_ultima_mod,                                      
+#hora = hora_ultima_mod,                                           
+#equipe = equipe_ultima_mod,                              
+#endereco,                                   
+#lat = latitude,                                      
+#lon = longitude,                                       
+#potencia_da_lampada_ultima_modernizacao = potencia_lampada_atual,
+#tipo_de_lampada_anterior = tipo_lampada_anterior,                
+#potencia_da_lampada_anterior = potencia_lampada_anterior,    
+#quantidade_ultima_modernizacao = quantidade_ultima_mod,        
+#quantidade_anterior,                                            
+#tipo_anterior,                                                 
+#desc_item_anterior,                                             
+#cod_item_anterior,                                              
+#tipo_atual,                                                     
+#desc_item_atual,                                               
+#cod_item_atual                                                 
     ) %>% 
     mutate(
       data_mod = as.Date(data_mod,"%d/%m/%Y"),
