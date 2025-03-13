@@ -148,110 +148,110 @@ at_rib_extrai_json_api(nome = "Atendimentos",
 print('Atendimentos Rib - Ok')
 
 
+
 # SOLICITACAOES                       
-#sol_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
-#  
-#  
-#  corpo_requisicao <- list(
-#    CMD_ID_STATUS_SOLICITACAO="-1",
-#    CMD_DATA_RECLAMACAO="01/07/2024",
-#    CMD_IDS_PARQUE_SERVICO="1",
-#    CMD_APENAS_EM_ABERTO="0"
-#    
-#  )
-#  
-#  response <- POST(
-#    url,
-#    add_headers(
-#      `Authorization` = credenciais_rib,
-#      `Accept-Encoding` = "gzip"
-#    ),
-#    body = corpo_requisicao,
-#    encode = "json"
-#  )
-#  
-#  if (status_code(response) != 200) {
-#    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-#    return(NULL)
-#  } 
-#  
-#  
-#  dados <- fromJSON(content(response, "text")) %>% 
-#    .[["RAIZ"]] %>%
-#    .[[raiz_1]] %>%
-#    .[[raiz_2]]
-#  
-#  
-#  
-#  solicitacoes <- dados %>% 
-#    clean_names() %>%
-#    select(  
-#      protocolo = any_of("numero_protocolo"),
-#      status = any_of("desc_status_solicitacao"),
-#      tempo_restante = any_of("desc_prazo_restante"),
-#      id_ocorrencia = any_of("id_ocorrencia"),
-#      possui_atendimento_anterior = any_of("possui_atendimento_anterior"),
-#      endereco_livre_solicitacao = any_of("endereco_livre_solicitacao"),
-#      origem_ocorrencia = any_of("desc_tipo_origem_solicitacao"),
-#      pontos = any_of("pontos"),
-#      data_reclamacao = any_of("data_reclamacao"),
-#      prazo_restante =  any_of("prazo_restante")
-#    ) %>% 
-#    mutate(data_reclamacao = as.Date(data_reclamacao,"%d/%m/%Y"),
-#           semana_marco = week(data_reclamacao)-week(as.Date("2023-02-25")),
-#           mes = month(data_reclamacao),
-#           mes = case_when(
-#             mes == 1 ~ "Janeiro",
-#             mes == 2 ~ "Fevereiro",
-#             mes == 3 ~ "Março",
-#             mes == 4 ~ "Abril",
-#             mes == 5 ~ "Maio",
-#             mes == 6 ~ "Junho",
-#             mes == 7 ~ "Julho",
-#             mes == 8 ~ "Agosto",
-#             mes == 9 ~ "Setembro",
-#             mes == 10 ~ "Outubro",
-#             mes == 11 ~ "Novembro",
-#             mes == 12 ~ "Dezembro",
-#           ),
-#           mes = factor(mes,levels = c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")),
-#           dia_semana = wday(data_reclamacao,label = T),
-#           dia_semana = case_when(
-#             dia_semana %in% c("dom","Sun") ~ "Dom",
-#             dia_semana %in% c("seg","Mon") ~ "Seg",
-#             dia_semana %in% c("ter","Tue") ~ "Ter",
-#             dia_semana %in% c("qua","Wed") ~ "Qua",
-#             dia_semana %in% c("qui","Thu") ~ "Qui",
-#             dia_semana %in% c("sex","Fri") ~ "Sex",
-#             dia_semana %in% c("sab","Sat") ~ "Sab"
-#             
-#           ),
-#           cor_vencimento = case_when(
-#             prazo_restante <= 0  ~  "darkred",
-#             prazo_restante > 0 & prazo_restante <= 24 ~  "red",
-#             prazo_restante > 24 & prazo_restante <= 48 ~  "orange",
-#             prazo_restante > 48 ~  "olivedrab"
-#           ),
-#           semana = week(data_reclamacao) - week(floor_date(data_reclamacao,"month")) +1) 
-#  
-#  
-#  arrow::write_parquet(solicitacoes, "tt_solicitacoes_rib.parquet")
-#  
-#  put_object(
-#    file = "tt_solicitacoes_rib.parquet",
-#    object = "tt_solicitacoes_rib.parquet",
-#    bucket = "automacao-conecta",
-#    region = 'sa-east-1'
-#  )
-#  
-#}
-#
-#sol_rib_extrai_json_api(nome = "Solicitações",
-#                        raiz_1 = "SOLICITACOES",
-#                        raiz_2 = "SOLICITACAO",
-#                        url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/Solicitacoes.json?CMD_ID_STATUS_SOLICITACAO=-1&CMD_IDS_PARQUE_SERVICO=1&CMD_DATA_RECLAMACAO=01/07/2024&CMD_APENAS_EM_ABERTO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjQzIiwiaWF0IjoxNzI5NjM5MjcxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.P1X55Bd9nD9ZxW__ocjTTrGW3qOX68b6CoxiUuKbrz8"
-#) 
-#print('Solicitações Rib - Ok')
+sol_rib_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+  
+  
+  corpo_requisicao <- list(
+    #CMD_ID_STATUS_SOLICITACAO="-1",
+    CMD_DATA_RECLAMACAO="01/07/2024",
+    CMD_IDS_PARQUE_SERVICO="1",
+    CMD_APENAS_EM_ABERTO="0"
+  )
+  
+  response <- POST(
+    url,
+    add_headers(
+      `Authorization` = credenciais_rib,
+      `Accept-Encoding` = "gzip"
+    ),
+    body = corpo_requisicao,
+    encode = "json"
+  )
+  
+  if (status_code(response) != 200) {
+    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
+    return(NULL)
+  } 
+  
+  
+  dados <- fromJSON(content(response, "text")) %>% 
+    .[["RAIZ"]] %>%
+    .[[raiz_1]] %>%
+    .[[raiz_2]]
+  
+  
+  
+  solicitacoes <- dados %>% 
+    clean_names() %>%
+    select(  
+      protocolo = any_of("numero_protocolo"),
+      status = any_of("desc_status_solicitacao"),
+      tempo_restante = any_of("desc_prazo_restante"),
+      id_ocorrencia = any_of("id_ocorrencia"),
+      possui_atendimento_anterior = any_of("possui_atendimento_anterior"),
+      endereco_livre_solicitacao = any_of("endereco_livre_solicitacao"),
+      origem_ocorrencia = any_of("desc_tipo_origem_solicitacao"),
+      pontos = any_of("pontos"),
+      data_reclamacao = any_of("data_reclamacao"),
+      prazo_restante =  any_of("prazo_restante")
+    ) %>% 
+    mutate(data_reclamacao = as.Date(data_reclamacao,"%d/%m/%Y"),
+           semana_marco = week(data_reclamacao)-week(as.Date("2023-02-25")),
+           mes = month(data_reclamacao),
+           mes = case_when(
+             mes == 1 ~ "Janeiro",
+             mes == 2 ~ "Fevereiro",
+             mes == 3 ~ "Março",
+             mes == 4 ~ "Abril",
+             mes == 5 ~ "Maio",
+             mes == 6 ~ "Junho",
+             mes == 7 ~ "Julho",
+             mes == 8 ~ "Agosto",
+             mes == 9 ~ "Setembro",
+             mes == 10 ~ "Outubro",
+             mes == 11 ~ "Novembro",
+             mes == 12 ~ "Dezembro",
+           ),
+           mes = factor(mes,levels = c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")),
+           dia_semana = wday(data_reclamacao,label = T),
+           dia_semana = case_when(
+             dia_semana %in% c("dom","Sun") ~ "Dom",
+             dia_semana %in% c("seg","Mon") ~ "Seg",
+             dia_semana %in% c("ter","Tue") ~ "Ter",
+             dia_semana %in% c("qua","Wed") ~ "Qua",
+             dia_semana %in% c("qui","Thu") ~ "Qui",
+             dia_semana %in% c("sex","Fri") ~ "Sex",
+             dia_semana %in% c("sab","Sat") ~ "Sab"
+             
+           ),
+           cor_vencimento = case_when(
+             prazo_restante <= 0  ~  "darkred",
+             prazo_restante > 0 & prazo_restante <= 24 ~  "red",
+             prazo_restante > 24 & prazo_restante <= 48 ~  "orange",
+             prazo_restante > 48 ~  "olivedrab"
+           ),
+           semana = week(data_reclamacao) - week(floor_date(data_reclamacao,"month")) +1) 
+  
+  
+  arrow::write_parquet(solicitacoes, "tt_solicitacoes_rib.parquet")
+  
+  put_object(
+    file = "tt_solicitacoes_rib.parquet",
+    object = "tt_solicitacoes_rib.parquet",
+    bucket = "automacao-conecta",
+    region = 'sa-east-1'
+  )
+  
+}
+
+sol_rib_extrai_json_api(nome = "Solicitações",
+                        raiz_1 = "SOLICITACOES",
+                        raiz_2 = "SOLICITACAO",
+                        url= "https://conectaribeiraopreto.exati.com.br/guia/command/conectaribeiraopreto/Solicitacoes.json?CMD_IDS_PARQUE_SERVICO=1&CMD_DATA_RECLAMACAO=01/07/2024&CMD_APENAS_EM_ABERTO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiI1NDYiLCJpYXQiOjE3NDAwMDExMDgsIm9yaWdpbiI6IkdVSUEtU0VSVklDRSJ9.EFHZUk-DUxOID9a9_3qT0x91tetGRiRv7bZScoqUAOE"
+) 
+print('Solicitações Rib - Ok')
 # ----
 
 
