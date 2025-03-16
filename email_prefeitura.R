@@ -20,7 +20,7 @@ library(gmailr)
 #Sys.getenv("GMAIL_AUTH")
 #packageVersion("emayili")  # Verifique se é a versão mais recente
 
-rmarkdown::pandoc_version()
+#rmarkdown::pandoc_version()
 render_relatorio <- rmarkdown::render(
  input = "script_relatorio.Rmd",
  output_file = "program_conecta_campinas.pdf"
