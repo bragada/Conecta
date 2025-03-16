@@ -16,7 +16,7 @@ header-includes:
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 #install.packages("tidyverse")
 install.packages("kableExtra")
-install.packages("knitr")
+#install.packages("knitr")
 install.packages("googlesheets4")
 install.packages("zoo")
 install.packages("tinytex")
