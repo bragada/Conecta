@@ -4,7 +4,7 @@ name: Conecta
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/55 * * * *'  # Executar a cada 15 minutos
+    - cron: '0 * * * *'  
 
 jobs:
   build:
