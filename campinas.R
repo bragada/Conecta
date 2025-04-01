@@ -811,7 +811,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   mod <- dados %>% 
     clean_names() %>% 
     select(
-    
+    num_gco,
     etiqueta = id_ponto_servico,
     data_mod = data_ultima_mod,                                      
     hora = hora_ultima_mod,                                           
