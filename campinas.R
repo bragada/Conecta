@@ -698,7 +698,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       prev_execucao_horas = previsao_execucao,
       status = no_prazo,
       origem_da_ocorrencia = origem_ocorrencia,
-      
+      protocolo = numero_protocolo
     ) %>% 
     mutate(prazo = as.Date(prazo,"%d/%m/%Y"),
            data_atendimento = as.Date(data_atendimento,"%d/%m/%Y"),
@@ -743,7 +743,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       object = "tt_atendimentos.parquet",
       bucket = "automacao-conecta"
     ) %>% 
-        select(no_atendimento,equipe,status_at = atendimento) %>% 
+        select(no_atendimento,equipe,status_at = atendimento,motivo,equipe,endereco) %>% 
         mutate(no_atendimento = as.character(no_atendimento))
       , by = c("atendimento" = "no_atendimento"))
   
