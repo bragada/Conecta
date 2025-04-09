@@ -56,7 +56,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   atendimentos <- dados %>% 
     janitor::clean_names() %>% 
     select(-endereco) %>% 
-    rename(endereco = nome_logradouro,
+    rename(endereco = nome_logradouro_completo,
            lat = latitude_total_ponto,
            lon = longitude_total_ponto,
            equipe = desc_equipe,
