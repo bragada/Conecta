@@ -224,7 +224,7 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 sol_extrai_json_api(nome = "Solicitações",
                     raiz_1 = "SOLICITACOES",
                     raiz_2 = "SOLICITACAO",
-                    url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/Solicitacoes.json?CMD_ID_STATUS_SOLICITACAO=-1&CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_RECLAMACAO=01/03/2023&CMD_APENAS_EM_ABERTO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
+                    url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/webservice-consultarsolicitacao.json?CMD_ID_STATUS_SOLICITACAO=-1&CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_RECLAMACAO=01/03/2023"
 ) 
 print('Solicitações - Ok')
 # ----
