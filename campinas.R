@@ -87,7 +87,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       lat = as.numeric(str_replace(lat, ",", ".")),
       lon = as.numeric(str_replace(lon, ",", "."))
     ) %>%
-    filter(atendimento %!in% c("MOD: RETRABALHO", "MOD: Atendido")) %>%
+    #filter(atendimento %!in% c("MOD: RETRABALHO", "MOD: Atendido")) %>%
     replace_na(list(motivo = "Não informado", tipo_de_ocorrencia = "Não informado")) %>%
     mutate(hora = hms(hora_inicio),
            hora_inicio = as.character(hora_inicio),
