@@ -825,7 +825,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     quantidade_ultima_modernizacao = quantidade_ultima_mod,        
     quantidade_anterior,                                            
     tipo_anterior = tipo_lampada_anterior,                                                 
-    desc_item_anterio = desc_itens_last4,                                             
+    desc_item_anterior = desc_itens_last4,                                             
     cod_item_anterior = cod_itens_last4,                                              
     tipo_atual = desc_itens_last5,                                                     
     desc_item_atual = desc_itens_last5,                                               
