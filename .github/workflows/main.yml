@@ -114,6 +114,6 @@ jobs:
 
     - name: Gerar relatório
       run: |
-        Rscript -e 'rmarkdown::render("script_relatorio.Rmd")'
+        Rscript -e 'rmarkdown::render("script_relatorio.Rmd", output_options = list(pdf_engine = "xelatex"))'
       env:
         R_LIBS_USER: ~/.R/library
