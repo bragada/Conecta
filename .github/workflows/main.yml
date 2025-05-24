@@ -1,9 +1,9 @@
-name: Conecta
+name: Conecta 
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 * * * *'  
 
 jobs:
   build:
@@ -26,9 +26,7 @@ jobs:
     - name: Instalar dependências do sistema
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev \
-          libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev \
-          libicu-dev libsodium-dev libpng-dev libtiff5-dev
+        sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev libsodium-dev libpng-dev libtiff5-dev texlive-xetex texlive-fonts-recommended texlive-plain-generic
 
     - name: Instalar Pandoc
       run: |
@@ -58,10 +56,15 @@ jobs:
       env:
         R_LIBS_USER: ~/.R/library
 
-    - name: Instalar TinyTeX (LaTeX)
+    - name: Instalar TinyTeX completo
       run: |
-        Rscript -e 'install.packages("tinytex")'
-        Rscript -e 'tinytex::install_tinytex()'
+        Rscript -e 'tinytex::install_tinytex(force = TRUE)'
+      env:
+        R_LIBS_USER: ~/.R/library
+
+    - name: Instalar xelatex via TinyTeX
+      run: |
+        Rscript -e 'tinytex::tlmgr_install(c("xetex", "fontspec", "xunicode", "polyglossia"))'
       env:
         R_LIBS_USER: ~/.R/library
 
@@ -79,6 +82,7 @@ jobs:
         SMTP_USER: ${{ secrets.SMTP_USER }}
         SMTP_PASS: ${{ secrets.SMTP_PASS }}
         EMAIL_API: ${{ secrets.EMAIL_API }}
+
       run: |
         echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
         echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -94,13 +98,13 @@ jobs:
         echo "$GMAIL_AUTH" > gmail_credentials.json
         echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
 
-    - name: Prefeitura
+    - name: Prefeitura 
       run: |
         Rscript email_prefeitura.R
       env:
         R_LIBS_USER: ~/.R/library
 
-    - name: Ribeirão
+    - name: Ribeirão 
       run: |
         Rscript ribeirao.R
       env:
@@ -114,6 +118,6 @@ jobs:
 
     - name: Gerar relatório
       run: |
-        Rscript -e 'rmarkdown::render("script_relatorio.Rmd", output_options = list(pdf_engine = "xelatex"))'
+        Rscript -e 'rmarkdown::render("script_relatorio.Rmd", output_format = "pdf_document", output_options = list(latex_engine = "xelatex"))'
       env:
         R_LIBS_USER: ~/.R/library
