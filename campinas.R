@@ -344,6 +344,9 @@ corpo_requisicao <- list(
                       object = "tt_osp.parquet",
                       bucket = "automacao-conecta"
   )
+
+  dados %>%  glimpse()
+      
   
   p_oc <- dados %>% 
     clean_names() %>% 
