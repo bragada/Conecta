@@ -444,10 +444,12 @@ if (status_code(response) != 200) {
     .[[raiz_1]] %>%
     .[[raiz_2]]
   
-  
+  if (is.null(dados) || length(dados) == 0) {
+  print("Objeto 'dados' está nulo ou vazio. Seguindo o fluxo.")
+} else {
 
-  
-  p_moni <- dados %>% 
+
+    p_moni <- dados %>% 
     clean_names() %>%
     select(
       equipe = any_of("desc_equipe"),
@@ -492,6 +494,12 @@ if (status_code(response) != 200) {
     region = 'sa-east-1'
   )
   
+  
+  
+  
+}
+  
+
 }
 
 p_moni_extrai_json_api(nome = "Painel de Monitoramento",
