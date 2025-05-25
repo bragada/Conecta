@@ -340,12 +340,12 @@ corpo_requisicao <- list(
     return(NULL)
   }
   
-  osp <- s3read_using(FUN = arrow::read_parquet,
-                      object = "tt_osp.parquet",
-                      bucket = "automacao-conecta"
-  )
+  #osp <- s3read_using(FUN = arrow::read_parquet,
+  #                    object = "tt_osp.parquet",
+  #                    bucket = "automacao-conecta"
+  #)
 
-  dados %>%  glimpse()
+  #dados %>%  glimpse()
       
   
   p_oc <- dados %>% 
