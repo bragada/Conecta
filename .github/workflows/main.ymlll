@@ -1,123 +1,127 @@
-name: Conecta 
+name: Conecta Teste Paralelo
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'  
+    - cron: '0 * * * *'
 
 jobs:
-  build:
+  prepara_ambiente:
     runs-on: ubuntu-latest
-
+    outputs:
+      R_LIBS_USER: ${{ steps.set_r_libs.outputs.R_LIBS_USER }}
     steps:
-    - name: Configurar repositório
-      uses: actions/checkout@v2
+      - name: Configurar repositório
+        uses: actions/checkout@v2
 
-    - name: Configurar cache para pacotes R
-      uses: actions/cache@v3
-      with:
-        path: ~/.R/library
-        key: ${{ runner.os }}-R-package-cache-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-R-
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Configurar cache para pacotes R
+        uses: actions/cache@v3
+        with:
+          path: ~/.R/library
+          key: ${{ runner.os }}-R-package-cache-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-R-
+        env:
+          R_LIBS_USER: ~/.R/library
 
-    - name: Instalar dependências do sistema
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev libsodium-dev libpng-dev libtiff5-dev texlive-xetex texlive-fonts-recommended texlive-plain-generic
+      - name: Instalar dependências do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev libsodium-dev libpng-dev libtiff5-dev
 
-    - name: Instalar Pandoc
-      run: |
-        sudo apt-get install -y pandoc
+      - name: Instalar Pandoc
+        run: |
+          sudo apt-get install -y pandoc
 
-    - name: Instalar R
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y r-base
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-recommended
 
-    - name: Criar e configurar diretório de bibliotecas R
-      run: |
-        mkdir -p ~/.R/library
-        echo "R_LIBS_USER=~/.R/library" >> ~/.Renviron
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Instalar R
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y r-base
 
-    - name: Reinstalar stringi a partir da fonte
-      run: |
-        Rscript -e 'install.packages("stringi", type = "source")'
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Criar e configurar diretório de bibliotecas R
+        id: set_r_libs
+        run: |
+          mkdir -p ~/.R/library
+          echo "R_LIBS_USER=~/.R/library" >> ~/.Renviron
+          echo "::set-output name=R_LIBS_USER::~/.R/library"
+        env:
+          R_LIBS_USER: ~/.R/library
 
-    - name: Reinstalar keyring
-      run: |
-        Rscript -e 'install.packages("keyring")'
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Reinstalar stringi a partir da fonte
+        run: |
+          Rscript -e 'install.packages("stringi", type = "source")'
+        env:
+          R_LIBS_USER: ~/.R/library
 
-    - name: Instalar TinyTeX completo
-      run: |
-        Rscript -e 'tinytex::install_tinytex(force = TRUE)'
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Reinstalar keyring
+        run: |
+          Rscript -e 'install.packages("keyring")'
+        env:
+          R_LIBS_USER: ~/.R/library
 
-    - name: Instalar xelatex via TinyTeX
-      run: |
-        Rscript -e 'tinytex::tlmgr_install(c("xetex", "fontspec", "xunicode", "polyglossia"))'
-      env:
-        R_LIBS_USER: ~/.R/library
+      - name: Definir variáveis de ambiente do AWS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          TZ: ${{ secrets.TZ }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          USERNAME_RIB: ${{ secrets.USERNAME_RIB }}
+          PASSWORD_RIB: ${{ secrets.PASSWORD_RIB }}
+          GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_API: ${{ secrets.EMAIL_API }}
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
+          echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.Renviron
+          echo "TZ=${TZ}" >> ~/.Renviron
+          echo "USERNAME=${USERNAME}" >> ~/.Renviron
+          echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
+          echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
+          echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
+          echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
+          echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
+          echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
+          echo "$GMAIL_AUTH" > gmail_credentials.json
+          echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
 
-    - name: Definir variáveis de ambiente do AWS
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        TZ: ${{ secrets.TZ }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
-        USERNAME_RIB: ${{ secrets.USERNAME_RIB }}
-        PASSWORD_RIB: ${{ secrets.PASSWORD_RIB }}
-        GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
-        SMTP_USER: ${{ secrets.SMTP_USER }}
-        SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        EMAIL_API: ${{ secrets.EMAIL_API }}
+  email_prefeitura:
+    needs: prepara_ambiente
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v2
+      - name: Rodar script email_prefeitura.R
+        run: Rscript email_prefeitura.R
+        env:
+          R_LIBS_USER: ~/.R/library
 
-      run: |
-        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
-        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
-        echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.Renviron
-        echo "TZ=${TZ}" >> ~/.Renviron
-        echo "USERNAME=${USERNAME}" >> ~/.Renviron
-        echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
-        echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
-        echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
-        echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
-        echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
-        echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
-        echo "$GMAIL_AUTH" > gmail_credentials.json
-        echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
+  ribeirao:
+    needs: prepara_ambiente
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v2
+      - name: Rodar script ribeirao.R
+        run: Rscript ribeirao.R
+        env:
+          R_LIBS_USER: ~/.R/library
 
-    - name: Prefeitura 
-      run: |
-        Rscript email_prefeitura.R
-      env:
-        R_LIBS_USER: ~/.R/library
-
-    - name: Ribeirão 
-      run: |
-        Rscript ribeirao.R
-      env:
-        R_LIBS_USER: ~/.R/library
-
-    - name: Campinas
-      run: |
-        Rscript campinas.R
-      env:
-        R_LIBS_USER: ~/.R/library
-
-    - name: Gerar relatório
-      run: |
-        Rscript -e 'rmarkdown::render("script_relatorio.Rmd", output_format = "pdf_document", output_options = list(latex_engine = "xelatex"))'
-      env:
-        R_LIBS_USER: ~/.R/library
+  campinas:
+    needs: prepara_ambiente
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v2
+      - name: Rodar script campinas.R
+        run: Rscript campinas.R
+        env:
+          R_LIBS_USER: ~/.R/library
