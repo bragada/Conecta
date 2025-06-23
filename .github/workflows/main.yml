@@ -6,10 +6,14 @@ on:
     - cron: '0 * * * *'
 
 jobs:
-  prepara_ambiente:
+  run-scripts:
     runs-on: ubuntu-latest
-    outputs:
-      R_LIBS_USER: ${{ steps.set_r_libs.outputs.R_LIBS_USER }}
+    strategy:
+      matrix:
+        script:
+          - email_prefeitura.R
+          - ribeirao.R
+          - campinas.R
     steps:
       - name: Configurar repositório
         uses: actions/checkout@v2
@@ -33,7 +37,7 @@ jobs:
         run: |
           sudo apt-get install -y pandoc
 
-      - name: Install LaTeX
+      - name: Instalar LaTeX
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-recommended
@@ -44,11 +48,9 @@ jobs:
           sudo apt-get install -y r-base
 
       - name: Criar e configurar diretório de bibliotecas R
-        id: set_r_libs
         run: |
           mkdir -p ~/.R/library
           echo "R_LIBS_USER=~/.R/library" >> ~/.Renviron
-          echo "::set-output name=R_LIBS_USER::~/.R/library"
         env:
           R_LIBS_USER: ~/.R/library
 
@@ -93,35 +95,7 @@ jobs:
           echo "$GMAIL_AUTH" > gmail_credentials.json
           echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
 
-  email_prefeitura:
-    needs: prepara_ambiente
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repositório
-        uses: actions/checkout@v2
-      - name: Rodar script email_prefeitura.R
-        run: Rscript email_prefeitura.R
-        env:
-          R_LIBS_USER: ~/.R/library
-
-  ribeirao:
-    needs: prepara_ambiente
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repositório
-        uses: actions/checkout@v2
-      - name: Rodar script ribeirao.R
-        run: Rscript ribeirao.R
-        env:
-          R_LIBS_USER: ~/.R/library
-
-  campinas:
-    needs: prepara_ambiente
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repositório
-        uses: actions/checkout@v2
-      - name: Rodar script campinas.R
-        run: Rscript campinas.R
+      - name: Rodar script ${{ matrix.script }}
+        run: Rscript ${{ matrix.script }}
         env:
           R_LIBS_USER: ~/.R/library
