@@ -9,38 +9,17 @@ library(googlesheets4)
 library(gargle)
 library(httr)
 
-# Pega credenciais do ambiente
-client_id <- Sys.getenv("GOOGLE_CLIENT_ID")
-client_secret <- Sys.getenv("GOOGLE_CLIENT_SECRET")
-refresh_token <- Sys.getenv("GOOGLE_REFRESH_TOKEN")
-
-# Cria objeto oauth_app
-app <- httr::oauth_app(
-  appname = "google",
-  key = client_id,
-  secret = client_secret
-)
-
-# Usa endpoint correto do gargle
-endpoint <- gargle::gargle_oauth_endpoint()
-
-# Cria token manualmente
-token <- httr::Token2.0$new(
-  app = app,
-  endpoint = endpoint,
-  params = list(scope = "https://www.googleapis.com/auth/spreadsheets"),
-  credentials = list(
-    access_token = NULL,
-    refresh_token = refresh_token,
-    token_type = "Bearer",
-    expires_in = 3600
-  )
-)
-
-# Autentica no googlesheets4
-gs4_auth(token = token)
-
-
+# Autenticação Google Sheets via conta de serviço
+# Em ambiente de CI/CD, o segredo é passado como string e salvo temporariamente em 'sa.json'
+service_account_json <- Sys.getenv("GSHEETS_SERVICE_ACCOUNT_JSON")
+if (nzchar(service_account_json)) {
+  writeLines(service_account_json, "sa.json")
+  gs4_auth(path = "sa.json")
+} else {
+  # Caso esteja rodando localmente, coloque o caminho do seu JSON aqui
+  # gs4_auth(path = "caminho/para/seu/service_account.json")
+  stop("Variável de ambiente GSHEETS_SERVICE_ACCOUNT_JSON não definida.")
+}
 # Corretivos/Preventivos
 analitico <- s3read_using(FUN = arrow::read_parquet,
              object = "tt_sgi_atendimento_atendimentos_prazo.parquet",
