@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         script:
-          - email_prefeitura.R
-          - ribeirao.R
-          - campinas.R
+          #- email_prefeitura.R
+          #- ribeirao.R
+          #- campinas.R
           - analitico_atendimentos.R
     steps:
       - name: Configurar repositório
