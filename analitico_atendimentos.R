@@ -1,7 +1,11 @@
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
+if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
+
 library(tidyverse)
 library(arrow)
 library(aws.s3)
+library(googlesheets4)
+
 
 # Corretivos/Preventivos
 analitico <- s3read_using(FUN = arrow::read_parquet,
