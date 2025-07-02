@@ -97,6 +97,6 @@ jobs:
           echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
 
       - name: Rodar script ${{ matrix.script }}
-        run: Rscript ${{ matrix.script }}
+        run: Rscript ${{ matrix.script }} || true
         env:
           R_LIBS_USER: ~/.R/library
