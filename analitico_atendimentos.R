@@ -1,5 +1,6 @@
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 library(tidyverse)
+library(arrow)
 
 # Corretivos/Preventivos
 analitico <- s3read_using(FUN = arrow::read_parquet,
