@@ -102,6 +102,12 @@ jobs:
           echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
           echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}" >> ~/.Renviron
 
+      - name: Salvar chave de serviço Google Sheets em sa.json
+        run: |
+          echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
+        env:
+          GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
+
       - name: Rodar script ${{ matrix.script }}
         run: Rscript ${{ matrix.script }} || true
         env:
