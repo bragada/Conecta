@@ -9,17 +9,8 @@ library(googlesheets4)
 library(gargle)
 library(httr)
 
-# Autenticação Google Sheets via conta de serviço
-# Em ambiente de CI/CD, o segredo é passado como string e salvo temporariamente em 'sa.json'
-service_account_json <- Sys.getenv("GSHEETS_SERVICE_ACCOUNT_JSON")
-if (nzchar(service_account_json)) {
-  writeLines(service_account_json, "sa.json")
-  gs4_auth(path = "sa.json")
-} else {
-  # Caso esteja rodando localmente, coloque o caminho do seu JSON aqui
-  # gs4_auth(path = "caminho/para/seu/service_account.json")
-  stop("Variável de ambiente GSHEETS_SERVICE_ACCOUNT_JSON não definida.")
-}
+gs4_auth(path = "sa.json")
+
 # Corretivos/Preventivos
 analitico <- s3read_using(FUN = arrow::read_parquet,
              object = "tt_sgi_atendimento_atendimentos_prazo.parquet",
