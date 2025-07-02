@@ -17,14 +17,17 @@ analitico <- s3read_using(FUN = arrow::read_parquet,
         !origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Corretivo"
       )) 
 
-arrow::write_parquet(analitico, "analitico_atendimentos_prev_cor.parquet")
+
+write.csv(analitico,'analitico_atendimentos_prev_cor.csv')
+
+#arrow::write_parquet(analitico, "analitico_atendimentos_prev_cor.parquet")
 
 
 
 # UPLOAD
 put_object(
-    file = "analitico_atendimentos_prev_cor.parquet",
-    object = "analitico_atendimentos_prev_cor.parquet",
+    file = "analitico_atendimentos_prev_cor.csv",
+    object = "analitico_atendimentos_prev_cor.csv",
     bucket = "automacao-conecta",
     region = 'sa-east-1'
   )
