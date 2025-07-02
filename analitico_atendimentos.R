@@ -18,17 +18,26 @@ analitico <- s3read_using(FUN = arrow::read_parquet,
       )) 
 
 
-write.csv(analitico,'analitico_atendimentos_prev_cor.csv')
+#write.csv(analitico,'analitico_atendimentos_prev_cor.csv')
 
+
+# Defina o ID ou a URL da sua planilha no Google Sheets
+gsheet_url <- "[https://docs.google.com/spreadsheets/d/10p-WT-sRI6UHXa1XRNKmz3Q-Fbby8pnJG3fnnLvKke8/edit?gid=0#gid=0]"
+
+# Autenticação (se necessário)
+# gs4_auth(email = "seu-email@gmail.com")
+
+# Escrever os dados na planilha do Google Sheets
+sheet_write(analitico, gsheet_url, sheet = "Analitico")
 #arrow::write_parquet(analitico, "analitico_atendimentos_prev_cor.parquet")
 
 
 
 # UPLOAD
-put_object(
-    file = "analitico_atendimentos_prev_cor.csv",
-    object = "analitico_atendimentos_prev_cor.csv",
-    bucket = "automacao-conecta",
-    region = 'sa-east-1'
-  )
+#put_object(
+#    file = "analitico_atendimentos_prev_cor.csv",
+#    object = "analitico_atendimentos_prev_cor.csv",
+#    bucket = "automacao-conecta",
+#    region = 'sa-east-1'
+#  )
 
