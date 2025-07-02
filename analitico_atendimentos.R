@@ -23,7 +23,7 @@ analitico <- s3read_using(FUN = arrow::read_parquet,
   mutate(origem_da_ocorrencia = case_when(
          origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Preventivo",
         !origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Corretivo"
-      )) %>% slice(1:5)
+      )) 
 
 
 #write.csv(analitico,'analitico_atendimentos_prev_cor.csv')
