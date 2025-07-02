@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         script:
-          - email_prefeitura.R
-          - ribeirao.R
-          - campinas.R
+          #- email_prefeitura.R
+          #- ribeirao.R
+          #- campinas.R
           - analitico_atendimentos.R
     steps:
       - name: Configurar repositório
@@ -86,10 +86,6 @@ jobs:
           GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          EMAIL_API: ${{ secrets.EMAIL_API }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
 
         run: |
@@ -104,20 +100,12 @@ jobs:
           echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
           echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
           echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
-          echo "$GMAIL_AUTH" > gmail_credentials.json
-          echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
-          echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" >> ~/.Renviron
-          echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> ~/.Renviron
-          echo "GOOGLE_REFRESH_TOKEN=${GOOGLE_REFRESH_TOKEN}" >> ~/.Renviron
           echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}" >> ~/.Renviron
 
       - name: Rodar script ${{ matrix.script }}
         run: Rscript ${{ matrix.script }} || true
         env:
           R_LIBS_USER: ~/.R/library
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
 
           
