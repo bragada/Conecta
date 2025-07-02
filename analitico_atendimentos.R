@@ -6,7 +6,29 @@ library(arrow)
 library(aws.s3)
 library(googlesheets4)
 
+library(googlesheets4)
+library(gargle)
 
+# Pega credenciais do ambiente (definidas como secrets no workflow)
+client_id <- Sys.getenv("GOOGLE_CLIENT_ID")
+client_secret <- Sys.getenv("GOOGLE_CLIENT_SECRET")
+refresh_token <- Sys.getenv("GOOGLE_REFRESH_TOKEN")
+
+# Cria objeto de token OAuth2 manualmente
+token <- httr::Token2.0$new(
+  app = httr::oauth_app("google", key = client_id, secret = client_secret),
+  endpoint = gargle::google_oauth2_endpoint(),
+  params = list(scope = "https://www.googleapis.com/auth/spreadsheets"),
+  credentials = list(
+    access_token = NULL,
+    refresh_token = refresh_token,
+    token_type = "Bearer",
+    expires_in = 3600
+  )
+)
+
+# Passa token para o googlesheets4
+gs4_auth(token = token)
 # Corretivos/Preventivos
 analitico <- s3read_using(FUN = arrow::read_parquet,
              object = "tt_sgi_atendimento_atendimentos_prazo.parquet",
