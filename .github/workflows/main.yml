@@ -67,7 +67,13 @@ jobs:
         env:
           R_LIBS_USER: ~/.R/library
 
-      - name: Definir variáveis de ambiente do AWS
+      - name: Instalar pacotes Google Sheets necessários
+        run: |
+          Rscript -e 'install.packages(c("googlesheets4", "gargle"))'
+        env:
+          R_LIBS_USER: ~/.R/library
+
+      - name: Definir variáveis de ambiente do AWS e Google
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -81,6 +87,9 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           EMAIL_API: ${{ secrets.EMAIL_API }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
         run: |
           echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
           echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -95,8 +104,14 @@ jobs:
           echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
           echo "$GMAIL_AUTH" > gmail_credentials.json
           echo "EMAIL_API=${EMAIL_API}" >> ~/.Renviron
+          echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" >> ~/.Renviron
+          echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> ~/.Renviron
+          echo "GOOGLE_REFRESH_TOKEN=${GOOGLE_REFRESH_TOKEN}" >> ~/.Renviron
 
       - name: Rodar script ${{ matrix.script }}
         run: Rscript ${{ matrix.script }} || true
         env:
           R_LIBS_USER: ~/.R/library
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
