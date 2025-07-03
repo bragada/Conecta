@@ -1,70 +1,73 @@
+#if (!requireNamespace("emayili", quietly = TRUE)) install.packages("emayili")
+#if (!requireNamespace("keyring", quietly = TRUE)) install.packages("keyring")
 if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
-if (!requireNamespace("blastula", quietly = TRUE)) install.packages("blastula")
-if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
-if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
-if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
+#if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
 
-if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-remotes::install_github("rich-iannone/blastula")
-library(blastula)
+#if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
+#library(curl)
 
+#library(keyring)
 library(tidyverse)
 library(rmarkdown)
-library(aws.s3)
-library(blastula)
-library(gargle)
-library(googlesheets4)
+library(gmailr)
 
-# Autenticação Google Sheets (service account)
-gs4_auth(path = "sa.json")
+#library(blastula)
+#library(emayili)
+#Sys.getenv("GMAIL_AUTH")
+#packageVersion("emayili")  # Verifique se é a versão mais recente
 
-# Renderizar o relatório
+rmarkdown::pandoc_version()
+#rmarkdown::pandoc_version()
 render_relatorio <- rmarkdown::render(
-  input = "script_relatorio.Rmd",
-  output_file = "program_conecta_campinas.pdf"
+ input = "script_relatorio.Rmd",
+ output_file = "program_conecta_campinas.pdf"
 )
 
-# Upload para S3
 put_object(
-  file = "program_conecta_campinas.pdf",
-  object = "program_conecta_campinas.pdf",
-  bucket = "automacao-conecta",
-  region = "sa-east-1"
-)
+    file = "program_conecta_campinas.pdf",
+    object = "program_conecta_campinas.pdf",
+    bucket = "automacao-conecta",
+    region = "sa-east-1"
+  )
 
-# Verificar se o arquivo foi gerado hoje
 info_relatorio <- file.info("program_conecta_campinas.pdf")
 
-if (as.Date(info_relatorio$mtime, tz = "America/Sao_Paulo") == Sys.Date()) {
-  print("Relatório gerado hoje - enviando email...")
+if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
+    print("s")
+  }else {
+print("n")}
 
-  # Criar o e-mail
-  email <- compose_email(
-    body = md("Bom dia,
 
-Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.
 
-Bot - HK CONSULTORIA")
-  )
 
-  # Enviar o e-mail usando SMTP do Gmail
-  smtp_send(
-    email,
-    from = Sys.getenv("SMTP_USER"),
-    to = "hkbragada@gmail.com",
-    subject = "Programação Conecta - Prefeitura",
-    attachments = "program_conecta_campinas.pdf",
-    credentials = creds_user_pass(
-      user = Sys.getenv("SMTP_USER"),
-      password = Sys.getenv("SMTP_PASS"),
-      provider = "gmail"
-    )
-  )
+#smtp <- server(
+#  host = "smtp.gmail.com",
+#  port = 587,
+#  username = Sys.getenv("SMTP_USER"),
+#  password = Sys.getenv("SMTP_PASS"),
+#  use_tls = TRUE  # Habilita SSL
+#)
 
-  print("Email enviado com sucesso!")
+# Criar o email e anexar o arquivo temporário
+#email <- envelope() %>%
+ # from("hkbragada@gmail.com") %>%
+ # to("rikibragada@gmail.com") %>%
+ # subject("Programação Conecta - Prefeitura") %>%
+ # text("Bom dia,  
 
-} else {
-  print("Relatório não foi gerado hoje")
-}
+#  Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.  
+
+#  Bot - HK CONSULTORIA") %>%
+#  attachment(path = "program_conecta_campinas.pdf")
+#Sys.sleep(5)  # Espera 5 segundos antes do envio
+
+# Enviar o email
+#smtp(email, verbose = TRUE)
+
+
+#} else {
+
+#}
