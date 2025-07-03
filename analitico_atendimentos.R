@@ -22,8 +22,8 @@ analitico <- s3read_using(FUN = arrow::read_parquet,
          #data_atendimento >= '2025-01-01', data_atendimento <= '2025-05-31') %>%
   mutate(origem_da_ocorrencia = case_when(
          origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Preventivo",
-        !origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Corretivo"
-      )) 
+        !origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Corretivo"),
+        dt_movimento = data_atendimento  %>% ceiling_date("month") - 1)
 
 
 #write.csv(analitico,'analitico_atendimentos_prev_cor.csv')
