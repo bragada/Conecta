@@ -11,10 +11,10 @@ jobs:
     strategy:
       matrix:
         script:
-          #- email_prefeitura.R
+          - email_prefeitura.R
           #- ribeirao.R
           #- campinas.R
-          - analitico_atendimentos.R
+          #- analitico_atendimentos.R
     steps:
       - name: Configurar repositório
         uses: actions/checkout@v2
