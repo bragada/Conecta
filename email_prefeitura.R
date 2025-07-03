@@ -35,9 +35,6 @@ info_relatorio <- file.info("program_conecta_campinas.pdf")
 if(as.Date(info_relatorio$mtime, tz = "America/Sao_Paulo") == Sys.Date()){
     print("Relatório gerado hoje - enviando email...")
     
-    # Configurar autenticação do Gmail com conta de serviço
-    gmail_auth(path = "sa.json", scope = "https://www.googleapis.com/auth/gmail.send")
-    
     # Criar e enviar o email
     email <- gm_mime() %>%
       gm_to("hkbragada@gmail.com") %>%
