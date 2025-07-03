@@ -5,6 +5,11 @@ if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
 if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
 if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
+
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("rich-iannone/blastula")
+library(blastula)
+
 library(tidyverse)
 library(rmarkdown)
 library(aws.s3)
