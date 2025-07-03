@@ -3,12 +3,14 @@ if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown"
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
 if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
+if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
 
 library(tidyverse)
 library(rmarkdown)
 library(aws.s3)
 library(gmailr)
 library(gargle)
+library(googlesheets4)
 
 # Autenticação com conta de serviço do Google
 gs4_auth(path = "sa.json")
