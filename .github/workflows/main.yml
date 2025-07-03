@@ -107,7 +107,14 @@ jobs:
           echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
+     
+      - name: Restaurar client_secret_gmail.json
+        run: echo "${{ secrets.GMAIL_CLIENT_SECRET_JSON }}" > client_secret_gmail.json
 
+      - name: Restaurar token gmailr
+        run: echo "${{ secrets.GMAILR_TOKEN }}" > .gmailr_token
+
+      
       - name: Rodar script ${{ matrix.script }}
         run: Rscript ${{ matrix.script }} || true
         env:
