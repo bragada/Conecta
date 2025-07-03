@@ -51,7 +51,7 @@ Bot - HK CONSULTORIA")
     to = "hkbragada@gmail.com",
     subject = "Programação Conecta - Prefeitura",
     attachments = "program_conecta_campinas.pdf",
-    credentials = creds(
+    credentials = creds_user_pass(
       user = Sys.getenv("SMTP_USER"),
       password = Sys.getenv("SMTP_PASS"),
       provider = "gmail"
