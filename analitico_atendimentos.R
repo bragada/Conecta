@@ -18,7 +18,8 @@ analitico <- s3read_using(FUN = arrow::read_parquet,
   filter(status_at %in% c('Atendido',
                           'Atendimento relacionado',
                           'Encontrado normal'),
-         !grepl("ronda|interna", equipe, ignore.case = TRUE)) %>% 
+         !grepl("ronda|interna", equipe, ignore.case = TRUE),
+         data_atendimento >= '2025-01-01') %>% 
          #data_atendimento >= '2025-01-01', data_atendimento <= '2025-05-31') %>%
   mutate(origem_da_ocorrencia = case_when(
          origem_da_ocorrencia %in% c("Ronda própria", "Sem origem definida") ~ "Preventivo",
