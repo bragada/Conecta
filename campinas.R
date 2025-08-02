@@ -705,6 +705,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       prazo = data_limite_atendimento,
       prazo_hora = hora_limite_atendimento,
       data_atendimento,
+      data_reclamacao,
       atendimento_hora = hora_atendimento,
       prev_execucao_horas = previsao_execucao,
       status = no_prazo,
