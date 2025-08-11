@@ -454,7 +454,7 @@ if (status_code(response) != 200) {
     clean_names() %>%
     select(
       equipe = any_of("desc_equipe"),
-      id_ponto_servico = any_of(id_ponto_servico"),
+      id_ponto_servico = any_of("id_ponto_servico"),
       tipo_de_ocorrencia = any_of("desc_tipo_ocorrencia"),
       bairro = any_of("nome_bairro"),
       endereco = any_of("endereco_livre"),
