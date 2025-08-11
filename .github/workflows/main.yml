@@ -12,7 +12,6 @@ jobs:
       matrix:
         script:
           - email_prefeitura.R
-          - ribeirao.R
           - campinas.R
           - analitico_atendimentos.R
     steps:
