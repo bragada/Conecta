@@ -352,7 +352,7 @@ corpo_requisicao <- list(
     clean_names() %>% 
     select(
       protocolo = numero_protocolo ,
-      id_ponto_servico
+      id_ponto_servico,
       tipo_de_ocorrencia = desc_tipo_ocorrencia,
       origem_ocorrencia = desc_tipo_origem_ocorrencia,
       #limite_atendimento,
