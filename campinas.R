@@ -895,7 +895,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       lon = as.numeric(str_replace(lon,",",".")),
       n_old = coalesce(as.numeric(quantidade_anterior),0),
       n_new = as.numeric(quantidade_ultima_modernizacao)) %>% 
-    filter(!is.na(potencia_da_lampada_ultima_modernizacao)) %>% 
+    #filter(!is.na(potencia_da_lampada_ultima_modernizacao)) %>% 
     mutate(
       pot_old = sapply(str_split(potencia_da_lampada_anterior,";"), function(x) sum(as.numeric(x),na.rm=T)),
       pot_new =sapply(str_split(potencia_da_lampada_ultima_modernizacao,";"), function(x) sum(as.numeric(x),na.rm=T)),
