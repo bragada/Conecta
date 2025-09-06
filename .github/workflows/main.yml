@@ -14,6 +14,7 @@ jobs:
           - email_prefeitura.R
           - campinas.R
           - analitico_atendimentos.R
+          - base_hist_oc_rec.R
     steps:
       - name: Configurar repositório
         uses: actions/checkout@v2
