@@ -60,7 +60,9 @@ base_his_oc_rec_s3 <- function(dados_atuais, s3_object, s3_bucket, ts_execucao) 
       filter(as_date(data_consulta) == data_execucao_atual)
     
     historico_para_comparar <- historico_de_hoje %>% select(-data_consulta)
-    novas_ocorrencias_unicas_hoje <- anti_join(dados_atuais, historico_para_comparar, by = names(dados_atuais))
+    colunas_para_comparacao <- setdiff(names(dados_atuais), "dif")
+
+    novas_ocorrencias_unicas_hoje <- anti_join(dados_atuais, historico_para_comparar, by = colunas_para_comparacao)
     
     if (nrow(novas_ocorrencias_unicas_hoje) == 0) {
       print("Nenhuma ocorrência nova encontrada nesta execução.")
