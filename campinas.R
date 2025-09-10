@@ -703,6 +703,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   sgi <- dados %>% 
     clean_names() %>% 
     select(
+      id_ordem_servico,
       atendimento = id_atendimento_ps,
       prazo = data_limite_atendimento,
       prazo_hora = hora_limite_atendimento,
