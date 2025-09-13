@@ -562,7 +562,8 @@ corpo_requisicao <- list(
       desc_ordem_servico,
       data_hora_recebido,
       total_pontos,
-      total_atendidos
+      total_atendidos,
+      id_obra = ids_obra
     ) %>% 
         mutate(total_pontos = as.numeric(total_pontos),
            total_atendidos = as.numeric(total_atendidos)
