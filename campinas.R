@@ -272,14 +272,32 @@ corpo_requisicao <- list(
  }
  
  osp <<- dados %>% 
-   clean_names() %>% 
-   select(id_ocorrencia=id_ocorrencia,
-          protocolo = numero_protocolo,
-          tipo_ocorrencia = desc_tipo_ocorrencia,
-          status = descricao_status,
-          origem_ocorrencia = desc_tipo_origem_ocorrencia,
-          prioridade = sigla_prioridade_ponto_ocorr) %>% 
-   distinct()
+clean_names() %>% 
+select(
+    data_limite_atendimento_data,
+    hora_limite_atendimento,
+    data_limite_atendimento,
+    endereco,
+    nome_bairro,
+    status = desc_status_atendimento_ps,
+    motivo = desc_motivo_atendimento_ps,
+    solucao = desc_solucao_atendimento_ps,
+    tipo_ocorrencia = desc_tipo_ocorrencia,
+    equipe = desc_equipe,
+    id_status_ocorrencia,
+    origem_ocorrencia = desc_tipo_origem_ocorrencia,
+    data_ordem_servico,
+    id_ordem_servico,
+    id_atendimento = id_atendimento_ps ,
+    data_hora_reclamacao,
+    data_reclamacao,
+    hora_reclamacao,
+    data_atendimento,
+    hora_conclusao,
+    data_hora_conclusao_atendimento,
+    desc_prazo,
+    protocolo= numero_protocolo
+  )
  
 
  
