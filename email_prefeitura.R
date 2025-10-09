@@ -50,10 +50,7 @@ smtp <- server(
   host = "smtp-relay.brevo.com",
   port = 587,
   username = Sys.getenv("SMTP_USER"),
-  password = Sys.getenv("SMTP_PASS"),
-  reuse = FALSE,
-  use_tls = TRUE,       # Ativa STARTTLS
-  ssl_verifypeer = TRUE # Verifica certificado
+  password = Sys.getenv("SMTP_PASS")
 )
 
 # Criar o email e anexar o arquivo temporário
