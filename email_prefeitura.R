@@ -3,6 +3,7 @@
 if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
+if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
 #if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
 
@@ -41,7 +42,24 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
 print("n")}
 
 
+library(gargle)
 
+# Caminho do arquivo PDF a ser enviado
+pdf_path <- "program_conecta_campinas.pdf" # ajuste para o nome correto
+
+# Autenticação usando OAuth2 (service account JSON)
+gmail_auth(json_file = "sa.json") # ou o método que preferir
+
+# Crie o e-mail
+email <- gm_mime() %>%
+  gm_to("hkbragada@email.com") %>%
+  gm_from("hkbragada@gmail.com") %>%
+  gm_subject("Assunto do e-mail") %>%
+  gm_text_body("Segue o PDF em anexo.") %>%
+  gm_attach(pdf_path, type = "application/pdf")
+
+# Envie o e-mail
+gm_send_message(email)
 
 #smtp <- server(
 #  host = "smtp.gmail.com",
