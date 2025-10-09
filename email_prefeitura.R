@@ -54,17 +54,17 @@ options(
 )
 
 # Autenticando com a service account (arquivo JSON)
-gm_auth_configure(path = "sa.json")
+gm_auth_configure(path = "sa_gmail.json")
 gm_auth(email = "hkbragada@gmail.com")
 
 
 # Crie o e-mail
 email <- gm_mime() %>%
-  gm_to("hkbragada@email.com") %>%
+  gm_to("hkbragada@gmail.com") %>%
   gm_from("hkbragada@gmail.com") %>%
   gm_subject("Assunto do e-mail") %>%
   gm_text_body("Segue o PDF em anexo.") %>%
-  gm_attach(pdf_path, type = "application/pdf")
+  gm_attach_file(pdf_path, type = "application/pdf")
 
 # Envie o e-mail
 gm_send_message(email)
