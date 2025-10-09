@@ -47,11 +47,10 @@ print("n")}
 
 
 smtp <- server(
-  host = "smtp.gmail.com",
+  host = "smtp-relay.brevo.com",
   port = 587,
   username = Sys.getenv("SMTP_USER"),
-  password = Sys.getenv("SMTP_PASS"),
-  use_tls = TRUE  # Habilita SSL
+  password = Sys.getenv("SMTP_PASS")
 )
 
 # Criar o email e anexar o arquivo temporário
@@ -61,10 +60,10 @@ email <- envelope() %>%
   subject("Programação Conecta - Prefeitura") %>%
   text("Bom dia,  
 
-#  Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.  
+#  Segue em anexo a programação diária das manutenções previstas para a cidade de Campinas.  
 
 #  Bot - HK CONSULTORIA") %>%
-  gm_attachment(path = "program_conecta_campinas.pdf")
+attachment(path = "program_conecta_campinas.pdf")
 Sys.sleep(5)  # Espera 5 segundos antes do envio
 
 # Enviar o email
