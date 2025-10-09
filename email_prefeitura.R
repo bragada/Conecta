@@ -64,7 +64,7 @@ email <- envelope() %>%
 #  Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.  
 
 #  Bot - HK CONSULTORIA") %>%
-  attachment(path = "program_conecta_campinas.pdf")
+  gm_attachment(path = "program_conecta_campinas.pdf")
 Sys.sleep(5)  # Espera 5 segundos antes do envio
 
 # Enviar o email
