@@ -42,32 +42,31 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
 print("n")}
 
 
-library(gargle)
-
-# Caminho do arquivo PDF a ser enviado
-pdf_path <- "program_conecta_campinas.pdf" # ajuste para o nome correto
 
 
-options(
-  gargle_oauth_email = TRUE,
-  gargle_oauth_cache = ".secrets"
+smtp <- server(
+  host = "smtp.gmail.com",
+  port = 587,
+  username = Sys.getenv("SMTP_USER"),
+  password = Sys.getenv("SMTP_PASS"),
+  use_tls = TRUE  # Habilita SSL
 )
 
-# Autenticando com a service account (arquivo JSON)
-gm_auth_configure(path = "sa_gmail.json")
-gm_auth(email = "hkbragada@gmail.com")
+# Criar o email e anexar o arquivo temporário
+email <- envelope() %>%
+  from("hkbragada@gmail.com") %>%
+  to("rikibragada@gmail.com") %>%
+  subject("Programação Conecta - Prefeitura") %>%
+  text("Bom dia,  
 
+#  Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.  
 
-# Crie o e-mail
-email <- gm_mime() %>%
-  gm_to("hkbragada@gmail.com") %>%
-  gm_from("hkbragada@gmail.com") %>%
-  gm_subject("Assunto do e-mail") %>%
-  gm_text_body("Segue o PDF em anexo.") %>%
-  gm_attach_file(pdf_path, type = "application/pdf")
+#  Bot - HK CONSULTORIA") %>%
+  attachment(path = "program_conecta_campinas.pdf")
+Sys.sleep(5)  # Espera 5 segundos antes do envio
 
-# Envie o e-mail
-gm_send_message(email)
+# Enviar o email
+smtp(email, verbose = TRUE)
 
 #smtp <- server(
 #  host = "smtp.gmail.com",
