@@ -4,8 +4,10 @@ if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown"
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
 if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
+if (!requireNamespace("emayili", quietly = TRUE)) install.packages("emayili")
 #if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
+library(emayili)
 
 #if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
 #library(curl)
