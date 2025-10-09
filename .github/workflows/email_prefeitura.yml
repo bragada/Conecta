@@ -101,11 +101,6 @@ jobs:
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
 
-      - name: Salvar chave de serviço GMAIL em sa_gmail.json
-        run: echo "${GMAIL_AUTH}" > sa_gmail.json
-        env:
-          GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
-          
       - name: Rodar script email_prefeitura.R
         run: Rscript email_prefeitura.R || true
         env:
@@ -113,4 +108,3 @@ jobs:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
