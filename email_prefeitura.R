@@ -47,8 +47,16 @@ library(gargle)
 # Caminho do arquivo PDF a ser enviado
 pdf_path <- "program_conecta_campinas.pdf" # ajuste para o nome correto
 
-# Autenticação usando OAuth2 (service account JSON)
-gmail_auth(json_file = "sa.json") # ou o método que preferir
+
+options(
+  gargle_oauth_email = TRUE,
+  gargle_oauth_cache = ".secrets"
+)
+
+# Autenticando com a service account (arquivo JSON)
+gm_auth_configure(path = "sa.json")
+gm_auth(email = "hkbragada@gmail.com")
+
 
 # Crie o e-mail
 email <- gm_mime() %>%
