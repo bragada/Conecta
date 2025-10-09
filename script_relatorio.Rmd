@@ -57,18 +57,18 @@ p_moni <-   s3read_using(FUN = arrow::read_parquet,
                bucket = "automacao-conecta"
   ) %>%
   filter(tipo_de_ocorrencia %in% c(
+    "Lâmp. acesa durante dia\t",
     "Lâmp. apagada",
-    "Lâmp. oscilando",
-    "Fio Caído Energizado",
-    "Lâmp. Acende e Apaga",
-    "Luminária Quebrada",
-    "Luminária Virada",
-    "Luminária/braço com risco de queda",
-    "Lâmp. acesa durante dia",
-    "Poste Abalroado",
-    "Poste Dando Choque")) %>% 
+    "Lâmp. Acende e Apaga\t",
+    "Manutenção Troca de Led",
+    "Ronda - Lampada Apagada",
+    "Ronda - Lampada Acesa",
+    "Ronda Led Apagada",
+    "Ronda Luminaria LED apagada",
+    "Ronda LED aceso",
+    "Ronda LED acende e apaga")) %>% 
   select(Protocolo = protocolo,Rua = endereco, Bairro = bairro) %>% 
-  filter(!is.na(Rua)) 
+  filter(!is.na(Rua),!is.na(Bairro)) 
 
 
 # OBRAS
