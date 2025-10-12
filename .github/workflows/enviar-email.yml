@@ -21,7 +21,9 @@ jobs:
         with:
           r-version: '4.3.0'
       - name: Install system dependencies for ragg
-        run: sudo apt-get update && sudo apt-get install -y \
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
           libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libwebp-dev libwebpmux-dev
       - name: 📦 Instalar dependências do sistema
         run: |
