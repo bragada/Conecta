@@ -47,4 +47,4 @@ jobs:
             GitHub Actions
 
           # ANEXO: Use o caminho LOCAL do arquivo no runner!
-          attachments: ./documento_anexo.pdf
+          attachments: program_conecta_campinas.pdf
