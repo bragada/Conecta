@@ -17,34 +17,59 @@ jobs:
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       # 2. Baixar o arquivo PDF do S3
-      # O arquivo será baixado para a raiz do workspace do runner.
       - name: Download PDF from S3
         run: |
           aws s3 cp s3://automacao-conecta/program_conecta_campinas.pdf ./program_conecta_campinas.pdf
+          ls -lh program_conecta_campinas.pdf
+          echo "Arquivo baixado com sucesso!"
 
-      # 3. Enviar o Email com o Anexo
-      # Usaremos a Action 'dawidd6/action-send-mail' por ser popular e suportar anexos de arquivos locais.
+      # 3. Verificar se o arquivo existe
+      - name: Verify PDF file
+        run: |
+          if [ -f "./program_conecta_campinas.pdf" ]; then
+            echo "✅ PDF file exists"
+            echo "File size: $(du -h program_conecta_campinas.pdf | cut -f1)"
+          else
+            echo "❌ PDF file not found!"
+            exit 1
+          fi
+
+      # 4. Enviar o Email com o Anexo
       - name: Send Email with PDF
-        uses: dawidd6/action-send-mail@v6
+        uses: dawidd6/action-send-mail@v3
         with:
-          # Configuração SMTP (Exemplo usando Gmail ou outro serviço)
-          server_address: smtp-relay.brevo.com # OU smtp.seuservico.com
+          # Configuração SMTP para Brevo (Sendinblue)
+          server_address: smtp-relay.brevo.com
           server_port: 587
-          secure: false # <-- Adicionar este
+          secure: true  # TLS/STARTTLS
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASS }}
 
           # Detalhes do Email
-          subject: Relatório PDF Anexado
+          subject: Relatório PDF Anexado - Conecta Campinas
           to: hkbragada@gmail.com
           from: hkbragada@gmail.com
-          body: |
-            Prezado(a),
-            
-            O PDF solicitado, "program_conecta_campinas.pdf", está anexado.
-            
-            Atenciosamente,
-            GitHub Actions
+          
+          # Corpo HTML para melhor formatação
+          html_body: |
+            <html>
+            <body>
+              <p>Prezado(a),</p>
+              <p>O PDF solicitado, <strong>"program_conecta_campinas.pdf"</strong>, está anexado a este email.</p>
+              <p>Atenciosamente,<br>
+              <em>GitHub Actions - Sistema Conecta</em></p>
+            </body>
+            </html>
 
-          # ANEXO: Use o caminho LOCAL do arquivo no runner!
-          attachments: program_conecta_campinas.pdf
+          # ANEXO: caminho relativo ao workspace
+          attachments: ./program_conecta_campinas.pdf
+          
+          # Prioridade do email
+          priority: normal
+
+      # 5. Confirmação de sucesso
+      - name: Success notification
+        if: success()
+        run: |
+          echo "✅ Email enviado com sucesso para hkbragada@gmail.com"
+          echo "Data/Hora: $(date)"
