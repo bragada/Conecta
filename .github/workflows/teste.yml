@@ -30,7 +30,6 @@ jobs:
           # Configuração SMTP (Exemplo usando Gmail ou outro serviço)
           server_address: smtp-relay.brevo.com # OU smtp.seuservico.com
           server_port: 587
-          secure: true
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASS }}
 
