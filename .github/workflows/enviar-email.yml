@@ -43,7 +43,7 @@ jobs:
       
       - name: 📚 Instalar pacotes do R
         run: |
-          install.packages(c("rmarkdown", "tidyverse", "knitr"), repos = "https://cloud.r-project.org")
+          install.packages(c("rmarkdown", "tidyverse", "knitr", "aws.s3"), repos = "https://cloud.r-project.org")
         shell: Rscript {0}
       
       - name: 📄 Gerar relatório PDF
