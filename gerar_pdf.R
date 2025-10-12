@@ -2,7 +2,7 @@
 cat("=== Iniciando geração do relatório ===\n")
 
 # Instalar pacotes
-packages <- c("rmarkdown", "tidyverse")
+packages <- c("rmarkdown", "tidyverse", "aws.s3")
 for (pkg in packages) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     cat(sprintf("Instalando %s...\n", pkg))
