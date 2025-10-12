@@ -3,9 +3,9 @@ name: Enviar Relatório por Email
 on:
   # Agenda: executar todos os dias às 9h (horário de Brasília = 12h UTC)
   schedule:
-    - cron: '0 12 * * *'  # Diariamente ao meio-dia UTC (9h BRT)
+    - cron: '0 12 * * *'
   
-  # Permite executar manualmente pelo GitHub
+  # Permite executar manualmente
   workflow_dispatch:
 
 jobs:
@@ -13,17 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # Passo 1: Baixar o código do repositório
       - name: 📥 Checkout do repositório
         uses: actions/checkout@v3
       
-      # Passo 2: Instalar R
       - name: 🔧 Configurar R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3.0'
       
-      # Passo 3: Instalar dependências do sistema (libcurl, pandoc, etc)
       - name: 📦 Instalar dependências do sistema
         run: |
           sudo apt-get update
@@ -35,24 +32,20 @@ jobs:
             libharfbuzz-dev \
             libfribidi-dev \
             pandoc \
-            pandoc-citeproc \
             texlive-latex-base \
             texlive-fonts-recommended \
             texlive-fonts-extra \
             texlive-latex-extra
       
-      # Passo 4: Instalar pacotes do R
       - name: 📚 Instalar pacotes do R
         run: |
           install.packages(c("rmarkdown", "tidyverse", "knitr"), repos = "https://cloud.r-project.org")
         shell: Rscript {0}
       
-      # Passo 5: Gerar o PDF
       - name: 📄 Gerar relatório PDF
         run: |
           Rscript gerar_pdf.R
       
-      # Passo 6: Verificar se o PDF foi criado
       - name: ✅ Verificar PDF gerado
         run: |
           if [ -f "program_conecta_campinas.pdf" ]; then
@@ -63,41 +56,26 @@ jobs:
             exit 1
           fi
       
-      # Passo 7: Enviar email com o PDF anexado
       - name: 📧 Enviar email
         uses: dawidd6/action-send-mail@v3
         with:
-          # Configurações do servidor SMTP Brevo
           server_address: smtp-relay.brevo.com
           server_port: 587
           secure: true
-          
-          # Credenciais (armazenadas nos Secrets do GitHub)
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASS }}
-          
-          # Detalhes do email
-          subject: Programação Conecta - Prefeitura - ${{ github.event.repository.updated_at }}
+          subject: Programação Conecta - Prefeitura
           to: rikibragada@gmail.com
           from: hkbragada@gmail.com
-          
-          # Corpo do email
           body: |
             Bom dia,
             
             Segue em anexo a programação diária das manutenções previstas para a cidade de Campinas.
             
-            Data de geração: ${{ github.event.repository.updated_at }}
-            
             Bot - HK CONSULTORIA
-          
-          # Arquivo anexado
           attachments: program_conecta_campinas.pdf
-          
-          # Converter corpo para HTML
           convert_markdown: true
       
-      # Passo 8: Confirmar sucesso
       - name: ✅ Concluído
         run: |
           echo "✓ Email enviado com sucesso!"
