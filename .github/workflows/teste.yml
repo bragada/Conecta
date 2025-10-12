@@ -36,7 +36,7 @@ jobs:
 
       # 4. Enviar o Email com o Anexo
       - name: Send Email with PDF
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v6
         with:
           # Configuração SMTP para Brevo (Sendinblue)
           server_address: smtp-relay.brevo.com
