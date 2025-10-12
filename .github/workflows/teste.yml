@@ -1,75 +1,139 @@
-name: Enviar Email com PDF do S3
+name: Enviar PDF do S3 por Email
+
+
 
 on:
-  workflow_dispatch: # Permite execução manual para testes
+
+  # Define o evento que dispara o workflow.
+
+  # Use 'workflow_dispatch' para poder rodar o workflow manualmente no GitHub UI.
+
+  workflow_dispatch:
+
+  
 
 jobs:
-  send_email_with_attachment:
-    runs-on: ubuntu-latest
 
-    steps:
-      # 1. Configurar credenciais AWS
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+  send_pdf_email_job:
 
-      # 2. Baixar o arquivo PDF do S3
-      - name: Download PDF from S3
-        run: |
-          aws s3 cp s3://automacao-conecta/program_conecta_campinas.pdf ./program_conecta_campinas.pdf
-          ls -lh program_conecta_campinas.pdf
-          echo "Arquivo baixado com sucesso!"
+    runs-on: ubuntu-latest
 
-      # 3. Verificar se o arquivo existe
-      - name: Verify PDF file
-        run: |
-          if [ -f "./program_conecta_campinas.pdf" ]; then
-            echo "✅ PDF file exists"
-            echo "File size: $(du -h program_conecta_campinas.pdf | cut -f1)"
-          else
-            echo "❌ PDF file not found!"
-            exit 1
-          fi
+    
 
-      # 4. Enviar o Email com o Anexo
-      - name: Send Email with PDF
-        uses: dawidd6/action-send-mail@v6
-        with:
-          # Configuração SMTP para Brevo (Sendinblue)
-          server_address: smtp-relay.brevo.com
-          server_port: 465
-          secure: true  # TLS/STARTTLS
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASS }}
+    steps:
 
-          # Detalhes do Email
-          subject: Relatório PDF Anexado - Conecta Campinas
-          to: hkbragada@gmail.com
-          from: hkbragada@gmail.com
-          
-          # Corpo HTML para melhor formatação
-          html_body: |
-            <html>
-            <body>
-              <p>Prezado(a),</p>
-              <p>O PDF solicitado, <strong>"program_conecta_campinas.pdf"</strong>, está anexado a este email.</p>
-              <p>Atenciosamente,<br>
-              <em>GitHub Actions - Sistema Conecta</em></p>
-            </body>
-            </html>
+      - name: 1. Checkout do Código
 
-          # ANEXO: caminho relativo ao workspace
-          attachments: ./program_conecta_campinas.pdf
-          
-          # Prioridade do email
-          priority: normal
+        uses: actions/checkout@v4
 
-      # 5. Confirmação de sucesso
-      - name: Success notification
-        if: success()
-        run: |
-          echo "✅ Email enviado com sucesso para hkbragada@gmail.com"
-          echo "Data/Hora: $(date)"
+
+
+      # ===============================================
+
+      # PASSO 2: CONFIGURAR E AUTENTICAR NA AWS
+
+      # ===============================================
+
+      - name: 2. Configurar Credenciais AWS
+
+        uses: aws-actions/configure-aws-credentials@v4
+
+        with:
+
+          # --- Substitua os placeholders abaixo ---
+
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+          # ---------------------------------------
+
+      
+
+      # ===============================================
+
+      # PASSO 3: BAIXAR O PDF DO S3 PARA O AMBIENTE LOCAL
+
+      # ===============================================
+
+      - name: 3. Baixar PDF do S3
+
+        run: |
+
+          # --- Substitua os placeholders abaixo ---
+
+          # 1. Altere 'NOME_DO_SEU_BUCKET' e 'CAMINHO/PARA/SEU/ARQUIVO.pdf'
+
+          # 2. O arquivo será salvo localmente em /tmp/documento_s3.pdf
+
+         aws s3 cp s3://automacao-conecta/program_conecta_campinas.pdf ./program_conecta_campinas.pdf
+
+          ls -lh program_conecta_campinas.pdf
+
+          echo "Arquivo baixado com sucesso!"
+
+          # ---------------------------------------
+
+        
+
+      # ===============================================
+
+      # PASSO 4: ENVIAR O EMAIL COM O ARQUIVO ANEXADO
+
+      # ===============================================
+
+      - name: 4. Enviar Email com Anexo PDF via Gmail
+
+        uses: polygon-software/action-email@v1
+
+        with:
+
+          # --- Configurações do Servidor SMTP (Gmail) ---
+
+          server_address: smtp.gmail.com
+
+          server_port: 465
+
+          secure: true
+
+          
+
+          # Use os Secrets para autenticação segura no Gmail
+
+          username: hkbragada@gmail.com # Seu email do Gmail
+
+          password: ${{ secrets.EMAIL_API}} # Sua Senha de Aplicação do Google
+
+          
+
+          # --- Configurações do Email ---
+
+          # Substitua os destinatários
+
+          to: rikibragada@gmail.com
+
+          from: hkbragada@gmail.com
+
+          subject: Relatório Diário - PDF Anexado
+
+          body: |
+
+            Prezado(a),
+
+            
+
+            O seu relatório em PDF solicitado foi anexado a esta mensagem.
+
+            
+
+            Atenciosamente,
+
+            GitHub Actions Reporter
+
+          
+
+          # CRUCIAL: Referência ao arquivo baixado localmente no passo 3
+
+          attachments: "/program_conecta_campinas.pdf"
