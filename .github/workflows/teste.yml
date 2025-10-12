@@ -48,7 +48,7 @@ jobs:
           # Detalhes do Email
           subject: Relatório PDF Anexado - Conecta Campinas
           to: hkbragada@gmail.com
-          from: hkbragada@gmail.com
+          from: 98ec0c001@smtp-brevo.com
           
           # Corpo HTML para melhor formatação
           html_body: |
