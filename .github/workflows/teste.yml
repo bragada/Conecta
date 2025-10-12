@@ -40,7 +40,7 @@ jobs:
         with:
           # Configuração SMTP para Brevo (Sendinblue)
           server_address: smtp-relay.brevo.com
-          server_port: 587
+          server_port: 465
           secure: true  # TLS/STARTTLS
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASS }}
