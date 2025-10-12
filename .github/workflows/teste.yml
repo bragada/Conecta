@@ -1,0 +1,50 @@
+name: Enviar Email com PDF do S3
+
+on:
+  workflow_dispatch: # Permite execução manual para testes
+
+jobs:
+  send_email_with_attachment:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Configurar credenciais AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 2. Baixar o arquivo PDF do S3
+      # O arquivo será baixado para a raiz do workspace do runner.
+      - name: Download PDF from S3
+        run: |
+          aws s3 cp s3://automacao-conecta/program_conecta_campinas.pdf ./program_conecta_campinas.pdf
+
+      # 3. Enviar o Email com o Anexo
+      # Usaremos a Action 'dawidd6/action-send-mail' por ser popular e suportar anexos de arquivos locais.
+      - name: Send Email with PDF
+        uses: dawidd6/action-send-mail@v6
+        with:
+          # Configuração SMTP (Exemplo usando Gmail ou outro serviço)
+          server_address: smtp.gmail.com # OU smtp.seuservico.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+
+          # Detalhes do Email
+          subject: Relatório PDF Anexado
+          to: rikibragada@gmail.com
+          from: hkbragada@gmail.com
+          body: |
+            Prezado(a),
+            
+            O PDF solicitado, "program_conecta_campinas.pdf", está anexado.
+            
+            Atenciosamente,
+            GitHub Actions
+
+          # ANEXO: Use o caminho LOCAL do arquivo no runner!
+          attachments: ./documento_anexo.pdf
