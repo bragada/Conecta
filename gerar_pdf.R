@@ -2,7 +2,7 @@
 cat("=== Iniciando geração do relatório ===\n")
 
 # Instalar pacotes
-packages <- c("rmarkdown", "tidyverse", "aws.s3")
+packages <- c("rmarkdown", "tidyverse", "aws.s3","janitor")
 for (pkg in packages) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     cat(sprintf("Instalando %s...\n", pkg))
@@ -11,6 +11,9 @@ for (pkg in packages) {
 }
 
 library(rmarkdown)
+library(janitor)
+library(aws.s3)
+
 library(tidyverse)
 
 # Verificar Pandoc
