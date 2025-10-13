@@ -44,31 +44,6 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
 print("n")}
 
 
-
-
-smtp <- server(
-  host = "smtp-relay.brevo.com",
-  port = 587,
-  username = Sys.getenv("SMTP_USER"),
-  password = Sys.getenv("SMTP_PASS")
-)
-
-# Criar o email e anexar o arquivo temporário
-email <- envelope() %>%
-  from("hkbragada@gmail.com") %>%
-  to("rikibragada@gmail.com") %>%
-  subject("Programação Conecta - Prefeitura") %>%
-  text("Bom dia,  
-
-#  Segue em anexo a programação diária das manutenções previstas para a cidade de Campinas.  
-
-#  Bot - HK CONSULTORIA") %>%
-attachment(path = "program_conecta_campinas.pdf")
-Sys.sleep(5)  # Espera 5 segundos antes do envio
-
-# Enviar o email
-smtp(email, verbose = TRUE)
-
 #smtp <- server(
 #  host = "smtp.gmail.com",
 #  port = 587,
