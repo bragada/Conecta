@@ -58,8 +58,12 @@ p_moni <-   s3read_using(FUN = arrow::read_parquet,
   ) %>%
   filter(tipo_de_ocorrencia %in% c(
     "Lâmp. acesa durante dia\t",
+    "L\u00e2mp. acesa durante dia\t",
     "Lâmp. apagada",
+    "L\u00e2mp. apagada",
     "Lâmp. Acende e Apaga\t",
+    "L\u00e2mp. Acende e Apaga\t",
+    "Manutenção Troca de Led",
     "Manutenção Troca de Led",
     "Ronda - Lampada Apagada",
     "Ronda - Lampada Acesa",
