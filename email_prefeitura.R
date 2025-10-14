@@ -11,14 +11,10 @@ if (!requireNamespace("googledrive", quietly = TRUE)) install.packages("googledr
 #if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
 library(googledrive)
-#if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
-#library(curl)
-auth_json_path <- tempfile(fileext = ".json")
-writeLines(Sys.getenv("GDRIVE_AUTH"), auth_json_path)
+
 
 # Autentica o googledrive com a conta de serviço
-googledrive::drive_auth(path = auth_json_path)
-
+googledrive::drive_auth(path =  "sa.json")
 #library(keyring)
 library(tidyverse)
 library(rmarkdown)
