@@ -6,10 +6,12 @@ if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 #if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
 if (!requireNamespace("emayili", quietly = TRUE)) install.packages("emayili")
 if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
+if (!requireNamespace("googledrive", quietly = TRUE)) install.packages("googledrive")
+
 #if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
-library(emayili)
-
+library(googledrive)
+drive_auth(email = "seu_email@gmail.com")
 #if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
 #library(curl)
 
@@ -43,7 +45,12 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   }else {
 print("n")}
 
+arquivo_local <- "program_conecta_campinas.pdf"
 
+nome_no_drive <- "program_conecta_campinas.pdf"
+
+# Envie para o Google Drive (pasta raiz). Para pasta específica, veja abaixo.
+ drive_upload(media = arquivo_local, name = nome_no_drive, path = as_id('1cdpU2bTo9b29IEVTRsjpqDVciXpsxrYT'), overwrite = TRUE)
 #smtp <- server(
 #  host = "smtp.gmail.com",
 #  port = 587,
