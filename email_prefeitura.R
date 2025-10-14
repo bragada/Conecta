@@ -45,12 +45,13 @@ if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
   }else {
 print("n")}
 
-arquivo_local <- "program_conecta_campinas.pdf"
 
-nome_no_drive <- "program_conecta_campinas.pdf"
 
 # Envie para o Google Drive (pasta raiz). Para pasta específica, veja abaixo.
- drive_upload(media = arquivo_local, name = nome_no_drive, path = as_id('1cdpU2bTo9b29IEVTRsjpqDVciXpsxrYT'), overwrite = TRUE)
+ drive_upload(media = "program_conecta_campinas.pdf",
+              name = "program_conecta_campinas.pdf",
+              path = as_id('1cdpU2bTo9b29IEVTRsjpqDVciXpsxrYT'),
+              overwrite = TRUE)
 #smtp <- server(
 #  host = "smtp.gmail.com",
 #  port = 587,
