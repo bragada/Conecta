@@ -103,6 +103,10 @@ jobs:
         run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
+      - name: Salvar chave de serviço Google Sheets em sa.json
+        run: echo "${GDRIVE_AUTH}" > sa_drive.json
+        env:
+          GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
 
       - name: Rodar script email_prefeitura.R
         run: Rscript email_prefeitura.R || true
