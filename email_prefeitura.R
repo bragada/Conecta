@@ -11,7 +11,6 @@ if (!requireNamespace("googledrive", quietly = TRUE)) install.packages("googledr
 #if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
 
 library(googledrive)
-drive_auth(email = "hkbragada@gmail.com")
 #if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
 #library(curl)
 
