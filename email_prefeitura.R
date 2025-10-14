@@ -14,7 +14,7 @@ library(googledrive)
 
 
 # Autentica o googledrive com a conta de serviço
-googledrive::drive_auth(path =  "sa.json")
+googledrive::drive_auth(path =  "sa_drive.json")
 #library(keyring)
 library(tidyverse)
 library(rmarkdown)
