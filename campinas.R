@@ -382,7 +382,7 @@ select(
  
 
  
- arrow::write_parquet(osp, "tt_email.parquet")
+ arrow::write_parquet(email, "tt_email.parquet")
 
  put_object(
    file = "tt_email.parquet",
