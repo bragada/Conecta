@@ -44,7 +44,7 @@ res <- POST(
     ),
     body = toJSON(list(
         from = "consultoria@hkbragada.com",
-        to = destinatario,
+        to = 'rikibragada@gmail.com,
         subject = "Teste de envio com PDF",
         html = "
 <p>Bom dia,</p>
