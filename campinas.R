@@ -318,6 +318,86 @@ osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
 print('Ocorrencias/Solicitacoes - Ok')   
 # ----
 
+# BASE EMAIL ----
+email_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+ 
+ 
+corpo_requisicao <- list(
+ CMD_ID_PARQUE_SERVICO = "[1,2]",
+ CMD_AGRUPAMENTO = "OCORRENCIA_PONTO_SERVICO",
+ CMD_STATUS = "PENDENTES",
+ CMD_ORIGEM_ATENDIMENTO = "TODOS",
+ CMD_TIPO_SOLICITACAO = "TODOS",
+ CMD_DATA_INICIO = "01/03/2023",
+ CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
+)
+     
+ response <- POST(
+    url,
+    add_headers(
+     `Authorization` = credenciais,
+     `Accept-Encoding` = "gzip"
+   ),
+     body = corpo_requisicao,
+     encode = "json"
+ )
+ 
+ if (status_code(response) != 200) {
+   message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
+   return(NULL)
+ } 
+ 
+ 
+ dados <- fromJSON(content(response, "text")) %>% 
+   .[["RAIZ"]] %>%
+   .[[raiz_1]] %>%
+   .[[raiz_2]]
+ 
+ 
+ if (length(dados) <= 10) {
+   message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
+   return(NULL)
+ }
+
+email <<- dados %>% 
+clean_names() %>% 
+select(
+    data_limite_atendimento_data,
+    hora_limite_atendimento,
+    data_limite_atendimento,
+    endereco,
+    nome_bairro,
+    tipo_ocorrencia = desc_tipo_ocorrencia,
+    equipe = desc_equipe,
+    id_status_ocorrencia,
+    origem_ocorrencia = desc_tipo_origem_ocorrencia,
+    data_ordem_servico,
+    id_ordem_servico,
+    data_hora_reclamacao,
+    data_reclamacao,
+    hora_reclamacao,
+    desc_prazo,
+    protocolo= numero_protocolo
+  )
+ 
+
+ 
+ arrow::write_parquet(osp, "tt_email.parquet")
+
+ put_object(
+   file = "tt_email.parquet",
+   object = "tt_email.parquet",
+   bucket = "automacao-conecta",
+   region = 'sa-east-1'
+ )
+ 
+}
+osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
+                    raiz_1 = "OCORRENCIAS_SOLICITACOES",
+                    raiz_2 = "OCORRENCIA_SOLICITACAO",
+                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=OCORRENCIA_PONTO_SERVICO&CMD_STATUS=TODOS&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
+print('Base Email - Ok')   
+# ----
 
 # Painel Ocorrências ----
 p_oc_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
