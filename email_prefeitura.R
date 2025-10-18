@@ -13,7 +13,9 @@ if (!requireNamespace("jsonlite", quietly = TRUE)) install.packages("tidyverse")
 
 library(tidyverse)
 library(rmarkdown)
-
+library(base64enc)
+library(httr)
+library(jsonlite)
 #library(blastula)
 #library(emayili)
 #Sys.getenv("GMAIL_AUTH")
