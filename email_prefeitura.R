@@ -16,97 +16,64 @@ library(rmarkdown)
 library(base64enc)
 library(httr)
 library(jsonlite)
-#library(blastula)
-#library(emayili)
-#Sys.getenv("GMAIL_AUTH")
-#packageVersion("emayili")  # Verifique se é a versão mais recente
 
-rmarkdown::pandoc_version()
-#rmarkdown::pandoc_version()
+
+# --- Renderizar o PDF ---
 render_relatorio <- rmarkdown::render(
- input = "script_relatorio.Rmd",
- output_file = "program_conecta_campinas.pdf"
+  input = "script_relatorio.Rmd",
+  output_file = "program_conecta_campinas.pdf"
 )
 
-# Caminho do arquivo PDF
+# --- Caminho do PDF ---
 arquivo_pdf <- "program_conecta_campinas.pdf"
-
 pdf_base64 <- base64encode(arquivo_pdf)
+
+# --- Configurações Resend ---
 api_key <- Sys.getenv("API_RESEND")
-destinatario <- c(Sys.getenv("EMAIL_USER"))
+remetente <- "consultoria@hkbragada.com"
 
+# --- Destinatários (uma única secret, separados por vírgula) ---
+destinatarios <- str_split(Sys.getenv("EMAIL_USER"), pattern = ",", simplify = TRUE) %>% as.vector()
 
-res <- POST(
-    url = "https://api.resend.com/emails",
-    add_headers(
-        Authorization = paste("Bearer", api_key),
-        "Content-Type" = "application/json"
-    ),
-    body = toJSON(list(
-        from = "consultoria@hkbragada.com",
-        to = 'rikibragada@gmail.com',
-        subject = "Teste de envio com PDF",
-        html = "
+# --- Corpo HTML do email ---
+html_corpo <- "
 <p>Bom dia,</p>
 <p>Segue em anexo a programação diária das manutenções previstas para a cidade de Campinas.</p>
 <p>Atenciosamente,<br>
 Agente de IA - HK CONSULTORIA</p>
-",
-        attachments = list(
-            list(
-                filename = "program_conecta_campinas.pdf",
-                content = pdf_base64
-            )
+"
+
+# --- Função para enviar email ---
+enviar_email <- function(destinatario) {
+  res <- POST(
+    url = "https://api.resend.com/emails",
+    add_headers(
+      Authorization = paste("Bearer", api_key),
+      "Content-Type" = "application/json"
+    ),
+    body = toJSON(list(
+      from = remetente,
+      to = destinatario,
+      subject = "Programação diária das manutenções",
+      html = html_corpo,
+      attachments = list(
+        list(
+          filename = "program_conecta_campinas.pdf",
+          content = pdf_base64
         )
+      )
     ), auto_unbox = TRUE)
-)
+  )
+  
+  # Retorna status
+  list(
+    destinatario = destinatario,
+    status = content(res, "parsed")
+  )
+}
 
-# Conferir resposta
-content(res, "parsed")
+# --- Enviar para todos os destinatários ---
+resultados <- lapply(destinatarios, enviar_email)
 
-
-#put_object(
-#    file = "program_conecta_campinas.pdf",
-#    object = "program_conecta_campinas.pdf",
-#    bucket = "automacao-conecta",
-#    region = "sa-east-1"
-#  )
-
-#info_relatorio <- file.info("program_conecta_campinas.pdf")
-
-#if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
-#    print("s")
-#  }else {
-#print("n")}
-
-
-
-
-#smtp <- server(
-#  host = "smtp.gmail.com",
-#  port = 587,
-#  username = Sys.getenv("SMTP_USER"),
-#  password = Sys.getenv("SMTP_PASS"),
-#  use_tls = TRUE  # Habilita SSL
-#)
-
-# Criar o email e anexar o arquivo temporário
-#email <- envelope() %>%
- # from("hkbragada@gmail.com") %>%
- # to("rikibragada@gmail.com") %>%
- # subject("Programação Conecta - Prefeitura") %>%
- # text("Bom dia,  
-
-#  Segue em anexo a programação diária das manutenções e modernizações previstas para a cidade de Campinas.  
-
-#  Bot - HK CONSULTORIA") %>%
-#  attachment(path = "program_conecta_campinas.pdf")
-#Sys.sleep(5)  # Espera 5 segundos antes do envio
-
-# Enviar o email
-#smtp(email, verbose = TRUE)
-
-
-#} else {
-
-#}
+# --- Printar resultados ---
+print(resultados)
