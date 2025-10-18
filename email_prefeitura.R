@@ -20,7 +20,7 @@ library(jsonlite)
 
 # --- Renderizar o PDF ---
 render_relatorio <- rmarkdown::render(
-  input = "script_relatorio.Rmd",
+  input = "script_relatorio_new.Rmd",
   output_file = "program_conecta_campinas.pdf"
 )
 
