@@ -4,18 +4,13 @@ if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown"
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 #if (!requireNamespace("gmailr", quietly = TRUE)) install.packages("gmailr")
 #if (!requireNamespace("gargle", quietly = TRUE)) install.packages("gargle")
-if (!requireNamespace("emayili", quietly = TRUE)) install.packages("emayili")
-if (!requireNamespace("curl", quietly = TRUE)) install.packages("curl")
-if (!requireNamespace("googledrive", quietly = TRUE)) install.packages("googledrive")
-
-#if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse")
-
-library(googledrive)
+if (!requireNamespace("base64enc", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("httr", quietly = TRUE)) install.packages("tidyverse")
+if (!requireNamespace("jsonlite", quietly = TRUE)) install.packages("tidyverse")
 
 
-# Autentica o googledrive com a conta de serviço
-googledrive::drive_auth(path =  "sa_drive.json")
-#library(keyring)
+
+
 library(tidyverse)
 library(rmarkdown)
 
@@ -31,27 +26,60 @@ render_relatorio <- rmarkdown::render(
  output_file = "program_conecta_campinas.pdf"
 )
 
-put_object(
-    file = "program_conecta_campinas.pdf",
-    object = "program_conecta_campinas.pdf",
-    bucket = "automacao-conecta",
-    region = "sa-east-1"
-  )
+# Caminho do arquivo PDF
+arquivo_pdf <- "program_conecta_campinas.pdf"
 
-info_relatorio <- file.info("program_conecta_campinas.pdf")
-
-if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
-    print("s")
-  }else {
-print("n")}
+pdf_base64 <- base64encode(arquivo_pdf)
+api_key <- Sys.getenv("API_RESEND")
+destinatario <- c(Sys.getenv("EMAIL_USER"))
 
 
+res <- POST(
+    url = "https://api.resend.com/emails",
+    add_headers(
+        Authorization = paste("Bearer", api_key),
+        "Content-Type" = "application/json"
+    ),
+    body = toJSON(list(
+        from = "consultoria@hkbragada.com",
+        to = destinatario,
+        subject = "Teste de envio com PDF",
+        html = "
+<p>Bom dia,</p>
+<p>Segue em anexo a programação diária das manutenções previstas para a cidade de Campinas.</p>
+<p>Atenciosamente,<br>
+Agente de IA - HK CONSULTORIA</p>
+",
+        attachments = list(
+            list(
+                filename = "program_conecta_campinas.pdf",
+                content = pdf_base64
+            )
+        )
+    ), auto_unbox = TRUE)
+)
 
-# Envie para o Google Drive (pasta raiz). Para pasta específica, veja abaixo.
- drive_upload(media = "program_conecta_campinas.pdf",
-              name = "program_conecta_campinas.pdf",
-              path = as_id('1cdpU2bTo9b29IEVTRsjpqDVciXpsxrYT'),
-              overwrite = TRUE)
+# Conferir resposta
+content(res, "parsed")
+
+
+#put_object(
+#    file = "program_conecta_campinas.pdf",
+#    object = "program_conecta_campinas.pdf",
+#    bucket = "automacao-conecta",
+#    region = "sa-east-1"
+#  )
+
+#info_relatorio <- file.info("program_conecta_campinas.pdf")
+
+#if(as.Date(info_relatorio$mtime,tz = "America/Sao_Paulo") == Sys.Date()){
+#    print("s")
+#  }else {
+#print("n")}
+
+
+
+
 #smtp <- server(
 #  host = "smtp.gmail.com",
 #  port = 587,
