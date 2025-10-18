@@ -34,7 +34,7 @@ remetente <- "consultoria@hkbragada.com"
 
 # --- Destinatários (uma única secret, separados por vírgula) ---
 destinatarios <- str_split(Sys.getenv("EMAIL_USER"), pattern = ",", simplify = TRUE) %>% as.vector()
-
+print(destinatarios)
 # --- Corpo HTML do email ---
 html_corpo <- "
 <p>Bom dia,</p>
