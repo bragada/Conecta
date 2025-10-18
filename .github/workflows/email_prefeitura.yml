@@ -83,6 +83,9 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
           GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
+          API_RESEND: ${{ secrets.API_RESEND }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+
 
         run: |
           echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
@@ -98,6 +101,8 @@ jobs:
           echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
           echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}" >> ~/.Renviron
           echo "GDRIVE_AUTH=${GDRIVE_AUTH}" >> ~/.Renviron
+          echo "API_RESEND=${API_RESEND}" >> ~/.Renviron
+          echo "EMAIL_USER=${EMAIL_USER}" >> ~/.Renviron
 
       - name: Salvar chave de serviço Google Sheets em sa.json
         run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
