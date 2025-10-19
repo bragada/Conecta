@@ -144,7 +144,7 @@ kbl(tab_programacao,longtable = T,align = "c",escape = T) %>%
 
 
 ```{r, echo=F,message=FALSE,warning=FALSE}
-kbl(p_moni,longtable = T,align = "c",escape = T) %>% 
+kbl(email,longtable = T,align = "c",escape = T) %>% 
   kable_styling(full_width = F,latex_options = c("scale_down","HOLD_position","repeat_header")) %>% 
   column_spec(1, width = "3cm") %>% 
   column_spec(2, width = "6cm") %>% 
