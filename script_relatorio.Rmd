@@ -57,28 +57,27 @@ p_moni <-   s3read_using(FUN = arrow::read_parquet,
                bucket = "automacao-conecta"
   ) %>%
   filter(tipo_de_ocorrencia %in% c(
-    "Lâmp. acesa durante dia\t",
-    "L\u00e2mp. acesa durante dia\t",
-    "Lâmp. apagada",
-    "L\u00e2mp. apagada",
-    "Lâmp. Acende e Apaga\t",
-    "L\u00e2mp. Acende e Apaga\t",
-    "Manutenção Troca de Led",
-    "Manutenção Troca de Led",
-    "Ronda - Lampada Apagada",
-    "Ronda - Lampada Acesa",
-    "Ronda Led Apagada",
-    "Ronda Luminaria LED apagada",
-    "Ronda LED aceso",
-    "Ronda LED acende e apaga",
-    "Ronda - Lampada Apagada"
-    "L<U+00E2>mp. apagada"
-    "Ronda - Lampada Apagada" 
-    "Ronda Luminaria LED apagada"
-    "Manuten<U+00E7><U+00E3>o Troca de Led"
-    "L<U+00E2>mp. Acende e Apaga\t"
-    "Ronda - Lampada Acesa"
-
+ "Lâmp. acesa durante dia\t",
+        "L\u00e2mp. acesa durante dia\t",
+        "Lâmp. apagada",
+        "L\u00e2mp. apagada",
+        "Lâmp. Acende e Apaga\t",
+        "L\u00e2mp. Acende e Apaga\t",
+        "Manutenção Troca de Led",
+        "Manutenção Troca de Led",
+        "Ronda - Lampada Apagada",
+        "Ronda - Lampada Acesa",
+        "Ronda Led Apagada",
+        "Ronda Luminaria LED apagada",
+        "Ronda LED aceso",
+        "Ronda LED acende e apaga",
+        "Ronda - Lampada Apagada",
+        "L<U+00E2>mp. apagada",
+        "Ronda - Lampada Apagada",
+        "Ronda Luminaria LED apagada",
+        "Manuten<U+00E7><U+00E3>o Troca de Led",
+        "L<U+00E2>mp. Acende e Apaga\t",
+        "Ronda - Lampada Acesa"
 
 )) %>% 
   select(Protocolo = protocolo,Rua = endereco, Bairro = bairro) %>% 
