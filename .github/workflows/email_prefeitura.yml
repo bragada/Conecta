@@ -2,9 +2,8 @@ name: Email Prefeitura
 
 on:
   schedule:
-    # Atenção: o horário do cron é em UTC.
     # 7h da manhã em Brasília (BRT) = 10h UTC
-    - cron: '0 10 * * *'
+    - cron: '0 11 * * *'
   workflow_dispatch:
 
 jobs:
