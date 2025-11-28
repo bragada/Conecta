@@ -1078,13 +1078,66 @@ obras_extrai_json_api(nome = "Obras",
                       raiz_2 = "OBRA",
                       url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarObras.json?CMD_OBRAS_ATRASADAS=0&CMD_IDS_PARQUE_SERVICO=1,2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
 )
-print('  Obras - Ok')     
-
-                       
-                       
-                       
-                       
+print('  Obras - Ok')          
+                  
 # ----
+
+                       # OBRAS ----
+mod_lum_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+
+corpo_requisicao <- list(
+  CMD_PARQUE_SERVICO = 2,
+  CMD_MODERNIZACAO = 2,
+  CMD_TIPO_CALCULO = 1
+)
+
+ response <- POST(
+     url,
+     add_headers(
+      `Authorization` = credenciais,
+      `Accept-Encoding` = "gzip"
+    ),
+      body = corpo_requisicao,
+      encode = "json"
+  )    
+  if (status_code(response) != 200) {
+    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
+    return(NULL)
+  } 
+  
+  
+  dados <- fromJSON(content(response, "text")) %>% 
+    .[["RAIZ"]] %>%
+    .[[raiz_1]] %>%
+    .[[raiz_2]]
+  
+  
+  if (length(dados) <= 10) {
+    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
+    return(NULL)
+  }
+  
+  mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod))
+  
+  
+  arrow::write_parquet(mod_lum, "tt_mod_lum.parquet")
+  
+  put_object(
+    file = "tt_mod_lum.parquet",
+    object = "tt_mod_lum.parquet",
+    bucket = "automacao-conecta",
+    region = 'sa-east-1'
+  )
+  
+}
+
+mod_lum_extrai_json_api(nome = "mod_lum",
+                      raiz_1 = "PONTOS_MODERNIZACAO",
+                      raiz_2 = "PONTO_MODERNIZACAO",
+                      url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/webservice-consultarpontosmodernizacaocompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_PAGE_SIZE=0&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=1"
+)
+print('  Mod Lum - Ok')     
+
 
 ###########################################################################################################
 
