@@ -15,6 +15,7 @@ jobs:
           - campinas.R
           - analitico_atendimentos.R
           - base_hist_oc_rec.R
+          - update_mod_prisma.R
     steps:
       - name: Configurar repositório
         uses: actions/checkout@v2
