@@ -1,14 +1,20 @@
 name: Email Prefeitura
 
 on:
-  schedule:
-    # 7h da manhã em Brasília (BRT) = 10h UTC
-    - cron: '0 11 * * *'
+  workflow_run:
+    workflows: ["Conecta"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
   email-prefeitura:
     runs-on: ubuntu-latest
+    # Corrigido: Verifica se o sucesso ocorreu na janela da hora 11 UTC
+    if: >
+      github.event.workflow_run.conclusion == 'success' && 
+      contains(github.event.workflow_run.updated_at, 'T11:')
+    
     steps:
       - name: Configurar repositório
         uses: actions/checkout@v2
@@ -84,8 +90,6 @@ jobs:
           GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
           API_RESEND: ${{ secrets.API_RESEND }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
-
-
         run: |
           echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
           echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
@@ -107,7 +111,8 @@ jobs:
         run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
-      - name: Salvar chave de serviço Google Sheets em sa.json
+
+      - name: Salvar chave de serviço Google Drive em sa_drive.json
         run: echo "${GDRIVE_AUTH}" > sa_drive.json
         env:
           GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
