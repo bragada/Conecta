@@ -60,7 +60,6 @@ corpo_requisicao <- list(
     return(NULL)
   }
 
-  print(dados %>% clean_names() %>% glimpse )
 
       
   mod_lum <- dados %>% 
@@ -77,6 +76,7 @@ corpo_requisicao <- list(
             map_dbl(~ sum(as.numeric(.x), na.rm = TRUE))
     ) %>% 
     ungroup() %>% 
+    distinct(id_ponto_servico, .keep_all = TRUE)
   
   
   
