@@ -60,7 +60,20 @@ corpo_requisicao <- list(
     return(NULL)
   }
   
-  mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod)) %>% distinct(id_ponto_servico)
+  mod_lum <- dados %>% 
+    clean_names() 
+    select(potencia_da_lampada_ultima_modernizacao,id_ponto_servico) %>% 
+    group_by(id_ponto_servico) %>% 
+    mutate(
+        potencia_total = potencia_lampada_atual %>% 
+            # Substitui vírgula por ponto (caso existam decimais no padrão PT-BR)
+            str_replace_all(",", ".") %>% 
+            # Divide a string pelo separador ";"
+            str_split(";") %>% 
+            # Converte para numérico e soma (map_dbl garante que o resultado seja um número)
+            map_dbl(~ sum(as.numeric(.x), na.rm = TRUE))
+    ) %>% 
+    ungroup() %>% 
   
   
   
