@@ -59,7 +59,10 @@ corpo_requisicao <- list(
     message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
     return(NULL)
   }
-  
+
+  print(dados %>% clean_names() %>% glimpse )
+
+      
   mod_lum <- dados %>% 
     clean_names() 
     select(potencia_lampada_atual,id_ponto_servico) %>% 
