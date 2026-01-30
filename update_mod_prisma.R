@@ -76,7 +76,7 @@ corpo_requisicao <- list(
             map_dbl(~ sum(as.numeric(.x), na.rm = TRUE))
     ) %>% 
     ungroup() %>% 
-    distinct(id_ponto_servico, .keep_all = TRUE)
+    distinct(id_ponto_servico,potencia_total)
   
   
   
