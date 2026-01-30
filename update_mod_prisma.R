@@ -62,7 +62,7 @@ corpo_requisicao <- list(
   
   mod_lum <- dados %>% 
     clean_names() 
-    select(potencia_da_lampada_ultima_modernizacao,id_ponto_servico) %>% 
+    select(potencia_lampada_atual,id_ponto_servico) %>% 
     group_by(id_ponto_servico) %>% 
     mutate(
         potencia_total = potencia_lampada_atual %>% 
