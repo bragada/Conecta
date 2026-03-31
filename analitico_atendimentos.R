@@ -1,13 +1,14 @@
 if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
 if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
 if (!requireNamespace("httr", quietly = TRUE)) install.packages("googlesheets4")
-
+  
 library(tidyverse)
 library(arrow)
 library(aws.s3)
 library(googlesheets4)
 library(gargle)
 library(httr)
+
 
 gs4_auth(path = "sa.json")
 
