@@ -926,7 +926,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     id_ponto_servico,
     data_mod = data_ultima_mod,                                      
     hora = hora_ultima_mod,                                           
-    equipe = equipe_ultima_mod,                              
+    equipe = equipe_last,                              
     endereco,                                   
     lat = latitude,                                      
     lon = longitude,                                       
