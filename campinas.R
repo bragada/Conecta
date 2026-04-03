@@ -51,11 +51,11 @@ exati_fetch_api <- function(nome, url, corpo_requisicao, raiz_1, raiz_2, min_len
     .[[raiz_1]] %>%
     .[[raiz_2]]
     
-  if (length(dados) <= min_length) {
-    # Para o caso especial do p_moni (min_length = 0), a gente não dá stop
-    # Mas para as outras, a gente dá.
+  n_obs <- if (is.data.frame(dados)) nrow(dados) else length(dados)
+  
+  if (n_obs <= min_length) {
     if (min_length > 0) {
-       stop("A base de dados de ", nome, " contém ", min_length, " ou menos observações. Falhando a extração.")
+       stop("A base de dados de ", nome, " contém ", n_obs, " observações (", min_length, " ou menos). Falhando a extração.")
     }
   }
   
