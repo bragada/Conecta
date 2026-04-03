@@ -17,7 +17,7 @@ library(aws.s3)
 library(arrow)
 
 
-credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
+credenciais <- paste0(Sys.getenv("EXATI_USERNAME"), ":", Sys.getenv("EXATI_PASSWORD")) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
