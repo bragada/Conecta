@@ -31,7 +31,7 @@ if (length(args) == 0) {
 # ATENDIMENTOS
 
 # FUNCAO GENERICA PARA EXTRAIR DADOS DA API EXATI
-exati_fetch_api <- function(nome, url, corpo_requisicao, raiz_1, raiz_2, min_length = 10) {
+exati_fetch_api <- function(nome, url, corpo_requisicao, raiz_1, raiz_2, min_length = 0) {
   response <- POST(
     url,
     add_headers(
@@ -54,9 +54,7 @@ exati_fetch_api <- function(nome, url, corpo_requisicao, raiz_1, raiz_2, min_len
   n_obs <- if (is.data.frame(dados)) nrow(dados) else length(dados)
   
   if (n_obs <= min_length) {
-    if (min_length > 0) {
-       stop("A base de dados de ", nome, " contém ", n_obs, " observações (", min_length, " ou menos). Falhando a extração.")
-    }
+    stop("A base de dados de ", nome, " contém ", n_obs, " observações (", min_length, " ou menos). Falhando a extração.")
   }
   
   return(dados)
@@ -70,7 +68,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         CMD_DATA_INICIO="01/03/2023"
     )
 
-  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   atendimentos <- dados %>% 
     janitor::clean_names() %>% 
@@ -164,25 +162,7 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   CMD_APENAS_EM_ABERTO = 0
   )
   
-  response <- POST(
-    url,
-    add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-    body = corpo_requisicao,
-    encode = "json"
-  )
-  
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   
   
@@ -266,7 +246,7 @@ corpo_requisicao <- list(
  CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
 )
      
- dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
  
  osp <<- dados %>% 
 clean_names() %>% 
@@ -331,7 +311,7 @@ corpo_requisicao <- list(
  CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
 )
      
- dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
 
 email <<- dados %>% 
 clean_names() %>% 
@@ -384,7 +364,7 @@ corpo_requisicao <- list(
   CMD_DATA_RECLAMACAO = "01/03/2023",
   CMD_APENAS_EM_ABERTO = 0
 )
-   dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 3)
+   dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   #osp <- s3read_using(FUN = arrow::read_parquet,
   #                    object = "tt_osp.parquet",
@@ -472,7 +452,7 @@ p_moni_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         CMD_APENAS_EM_ABERTO = 0
   )
       
-  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 0)
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   if (is.null(dados) || length(dados) == 0) {
     print("Objeto 'dados' está nulo ou vazio. Seguindo o fluxo.")
@@ -553,7 +533,7 @@ corpo_requisicao <- list(
   CMD_ID_PARQUE_SERVICO = 2
 )
       
-  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   os <- dados %>% 
     clean_names() %>%
@@ -612,7 +592,7 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
    CMD_PAINEL_NOVO = 1
   )
       
-  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   oa <- dados %>% 
     clean_names() %>%
@@ -660,26 +640,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         CMD_CONFIRMADOS = 1
     )
     
-    response <- POST(
-        url,
-        add_headers(
-            `Authorization` = credenciais,
-            `Accept-Encoding` = "gzip"
-        ),
-        body = corpo_requisicao,
-        encode = "json"
-    )
-
-      
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+    dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
 
   
@@ -775,7 +736,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   CMD_MODERNIZACAO = 2,
   CMD_TIPO_CALCULO = 1
 )
-  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   mod <- dados %>% 
     clean_names() %>% 
@@ -888,7 +849,7 @@ corpo_requisicao <- list(
   CMD_ID_PARQUE_SERVICO = "1,2"
 )
 
- dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   obras <- dados %>% 
     clean_names() %>% 
@@ -929,7 +890,7 @@ corpo_requisicao <- list(
   CMD_TIPO_CALCULO = 1
 )
 
- dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2)
   
   mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod))
   
