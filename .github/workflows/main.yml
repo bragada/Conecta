@@ -10,6 +10,7 @@ jobs:
     name: Extração - ${{ matrix.script }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       max-parallel: 3
       matrix:
         script:
