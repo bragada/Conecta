@@ -12,7 +12,18 @@ jobs:
       matrix:
         script:
           - email_prefeitura.R
-          - campinas.R
+          - 'campinas.R Atendimentos'
+          - 'campinas.R Solicitações'
+          - 'campinas.R Ocorrencias_Solicitacoes'
+          - 'campinas.R Base_Email'
+          - 'campinas.R Painel_Ocorrencias'
+          - 'campinas.R Painel_Monitoramento'
+          - 'campinas.R Ordens_de_Servico'
+          - 'campinas.R Ocorrencias_Autorizar'
+          - 'campinas.R ATENDIMENTO_QUANTO_AO_PRAZO'
+          - 'campinas.R Modernizados'
+          - 'campinas.R Obras'
+          - 'campinas.R mod_lum'
           - analitico_atendimentos.R
           - base_hist_oc_rec.R
           - update_mod_prisma.R
@@ -114,7 +125,7 @@ jobs:
           GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
           
       - name: Rodar script ${{ matrix.script }}
-        run: Rscript ${{ matrix.script }} || true
+        run: Rscript ${{ matrix.script }}
         env:
           R_LIBS_USER: ~/.R/library
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}

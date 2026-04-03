@@ -1,5 +1,5 @@
 #install.packages(c("httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow"))
-install.packages("base64enc")
+#install.packages("base64enc")
 library(base64enc)
 
 library(httr)
@@ -16,6 +16,16 @@ credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
 
 `%!in%` <- Negate(`%in%`) 
 
+
+
+# LER ARGUMENTOS DA LINHA DE COMANDO
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) == 0) {
+  # Se nenhum argumento for passado, rodar todas
+  target_base <- "todas"
+} else {
+  target_base <- args[1]
+}
 
 # ATENDIMENTOS
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
@@ -37,8 +47,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   )
   
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -49,8 +58,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   atendimentos <- dados %>% 
@@ -123,12 +131,14 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 }
 
 
-at_extrai_json_api(nome = "Atendimentos",
+if (target_base == "todas" || target_base == "Atendimentos") {
+  at_extrai_json_api(nome = "Atendimentos",
                    raiz_1 = "PONTOS_ATENDIDOS",
                    raiz_2 = "PONTO_ATENDIDO",
                    url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarAtendimentoPontoServico.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
 ) 
 print('Atendimentos - Ok')
+}
 
 
 
@@ -154,8 +164,7 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   )
   
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -221,12 +230,14 @@ sol_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
 }
 
-sol_extrai_json_api(nome = "Solicitações",
+if (target_base == "todas" || target_base == "Solicitações") {
+  sol_extrai_json_api(nome = "Solicitações",
                     raiz_1 = "SOLICITACOES",
                     raiz_2 = "SOLICITACAO",
                     url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/webservice-consultarsolicitacao.json?CMD_ID_STATUS_SOLICITACAO=-1&CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_RECLAMACAO=01/03/2023"
 ) 
 print('Solicitações - Ok')
+}
 # ----
 
 
@@ -255,8 +266,7 @@ corpo_requisicao <- list(
  )
  
  if (status_code(response) != 200) {
-   message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-   return(NULL)
+   stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
  } 
  
  
@@ -267,8 +277,7 @@ corpo_requisicao <- list(
  
  
  if (length(dados) <= 10) {
-   message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-   return(NULL)
+   stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
  }
  
  osp <<- dados %>% 
@@ -311,11 +320,13 @@ select(
  )
  
 }
-osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
+if (target_base == "todas" || target_base == "Ocorrencias_Solicitacoes") {
+  osp_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
                     raiz_1 = "OCORRENCIAS_SOLICITACOES",
                     raiz_2 = "OCORRENCIA_SOLICITACAO",
                     url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=OCORRENCIA_PONTO_SERVICO&CMD_STATUS=TODOS&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
-print('Ocorrencias/Solicitacoes - Ok')   
+print('Ocorrencias/Solicitacoes - Ok')
+}   
 # ----
 
 # BASE EMAIL ----
@@ -343,8 +354,7 @@ corpo_requisicao <- list(
  )
  
  if (status_code(response) != 200) {
-   message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-   return(NULL)
+   stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
  } 
  
  
@@ -355,8 +365,7 @@ corpo_requisicao <- list(
  
  
  if (length(dados) <= 10) {
-   message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-   return(NULL)
+   stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
  }
 
 email <<- dados %>% 
@@ -392,11 +401,13 @@ select(
  )
  
 }
-email_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
+if (target_base == "todas" || target_base == "Base_Email") {
+  email_extrai_json_api(nome = "Ocorrencias/Solicitacoes Pendentes Realizadas ",
                     raiz_1 = "OCORRENCIAS_SOLICITACOES",
                     raiz_2 = "OCORRENCIA_SOLICITACAO",
                     url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasSolicitacoesPendentesRealizadas.json?CMD_ID_PARQUE_SERVICO=[1,2]&CMD_AGRUPAMENTO=OCORRENCIA_PONTO_SERVICO&CMD_STATUS=PENDENTES&CMD_ORIGEM_ATENDIMENTO=TODOS&CMD_TIPO_SOLICITACAO=TODOS&CMD_DATA_INICIO=01/03/2023&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs")
-print('Base Email - Ok')   
+print('Base Email - Ok')
+}   
 # ----
 
 # Painel Ocorrências ----
@@ -419,8 +430,7 @@ corpo_requisicao <- list(
   )
   
   if (status_code(response) != 200) {
-    print("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -431,8 +441,7 @@ corpo_requisicao <- list(
   
   
   if (length(dados) <= 3) {
-    print("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   #osp <- s3read_using(FUN = arrow::read_parquet,
@@ -500,11 +509,13 @@ corpo_requisicao <- list(
   
 }
 
-p_oc_extrai_json_api(nome = "Painel de Ocorrências",
+if (target_base == "todas" || target_base == "Painel_Ocorrencias") {
+  p_oc_extrai_json_api(nome = "Painel de Ocorrências",
                      raiz_1 = "PONTOS_SERVICO",
                      raiz_2 = "PONTO_SERVICO",
                      url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/PaineldeOcorrencias.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DENTRO_DE_AREA=-1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Painel Ocorrências - Ok')
+}
 
 # ----
 
@@ -530,8 +541,7 @@ p_moni_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   )  
 
 if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -599,11 +609,13 @@ if (status_code(response) != 200) {
 
 }
 
-p_moni_extrai_json_api(nome = "Painel de Monitoramento",
+if (target_base == "todas" || target_base == "Painel_Monitoramento") {
+  p_moni_extrai_json_api(nome = "Painel de Monitoramento",
                        raiz_1 = "PONTOS_SERVICO",
                        raiz_2 = "PONTO_SERVICO",
                        url= "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosServicoOcorrenciaAndamentoEquipe.json?CMD_IDS_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Painel Monitoramento - Ok')
+}
 
 # ----
 
@@ -629,8 +641,7 @@ corpo_requisicao <- list(
 
       
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -641,8 +652,7 @@ corpo_requisicao <- list(
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   os <- dados %>% 
@@ -682,11 +692,13 @@ corpo_requisicao <- list(
   
 }
 
-os_extrai_json_api(nome = "Ordens de Serviço",
+if (target_base == "todas" || target_base == "Ordens_de_Servico") {
+  os_extrai_json_api(nome = "Ordens de Serviço",
                    raiz_1 = "ORDENS_SERVICO",
                    raiz_2 = "ORDEM_SERVICO",
                    url="https://conectacampinas.exati.com.br/guia/command/conectacampinas/Ordensdeservico.json?CMD_DATA_INICIAL=01/01/2023&CMD_IDS_PARQUE_SERVICO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
 print(' Ordens de Serviço - Ok')
+}
 
 # ----
 
@@ -712,8 +724,7 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
   
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -724,8 +735,7 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   oa <- dados %>% 
@@ -754,11 +764,13 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
 }
 
-oa_extrai_json_api(nome = "Ocorrências Autorizar",
+if (target_base == "todas" || target_base == "Ocorrencias_Autorizar") {
+  oa_extrai_json_api(nome = "Ocorrências Autorizar",
                    raiz_1 = "PONTOS_SERVICO",
                    raiz_2 = "PONTO_SERVICO",
                    url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarOcorrenciasAutorizar.json?CMD_ID_PARQUE_SERVICO=2&CMD_PAINEL_NOVO=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzM5Mzg2MDQ4LCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.dngF6qc31is6RSLvSeBjGxcU8GqvoMtGdQqPJTZNDoI")
-print('  Ocorrências Autorizar  - Ok')                
+print('  Ocorrências Autorizar  - Ok')
+}                
 # ----
 # ATENDIMENTO QUANTO AO PRAZO ----
 sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
@@ -784,8 +796,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
       
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -869,11 +880,13 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
 }
 
-sgi_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
+if (target_base == "todas" || target_base == "ATENDIMENTO_QUANTO_AO_PRAZO") {
+  sgi_extrai_json_api(nome = "ATENDIMENTO QUANTO AO PRAZO",
                     raiz_1 = "ATENDIMENTOS",
                     raiz_2 = "ATENDIMENTO",
                     url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPrazosAtendimento.json?CMD_IDS_PARQUE_SERVICO=2&CMD_DATA_INICIAL_FILTRO=01/01/2021&CMD_DATA_FINAL_FILTRO=01/01/2040&CMD_ID_SEM_REGIAO=-1&CMD_DETALHADO=1&CMD_CONFIRMADOS=1&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw")
-print('ATENDIMENTO QUANTO AO PRAZO  - Ok')                
+print('ATENDIMENTO QUANTO AO PRAZO  - Ok')
+}                
 
 # ----
 
@@ -898,8 +911,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
       
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -915,8 +927,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   mod <- dados %>% 
@@ -1010,12 +1021,14 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
 }
 
-mod_extrai_json_api(nome = "Modernizados",
+if (target_base == "todas" || target_base == "Modernizados") {
+  mod_extrai_json_api(nome = "Modernizados",
                     raiz_1 = "PONTOS_MODERNIZACAO",
                     raiz_2 = "PONTO_MODERNIZACAO",
                     url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_MODERNIZACAO=3&CMD_AGRUPAMENTO=2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTc0MTMwODExNSwib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.kqtz1rMiFi_fYv8sAjQ66wXh3gddF3mCiPIojxz-oZ8"
 )
-print('  PONTOS MODERNIZADOS   - Ok')                
+print('  PONTOS MODERNIZADOS   - Ok')
+}                
 
 # ----
 
@@ -1038,8 +1051,7 @@ corpo_requisicao <- list(
       encode = "json"
   )    
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -1050,8 +1062,7 @@ corpo_requisicao <- list(
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   obras <- dados %>% 
@@ -1073,12 +1084,14 @@ corpo_requisicao <- list(
   
 }
 
-obras_extrai_json_api(nome = "Obras",
+if (target_base == "todas" || target_base == "Obras") {
+  obras_extrai_json_api(nome = "Obras",
                       raiz_1 = "OBRAS",
                       raiz_2 = "OBRA",
                       url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarObras.json?CMD_OBRAS_ATRASADAS=0&CMD_IDS_PARQUE_SERVICO=1,2&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW9yZGFuby5jbGFib25kZUBleGF0aS5jb20uYnIiLCJqdGkiOiIyMTg3IiwiaWF0IjoxNzQxMzA2MjUxLCJvcmlnaW4iOiJHVUlBLVNFUlZJQ0UifQ.4pOO-PcgG-XF8c8L1fDeX2PauVCPNU0OBIcJ3J2WLGw"
 )
-print('  Obras - Ok')          
+print('  Obras - Ok')
+}          
                   
 # ----
 
@@ -1101,8 +1114,7 @@ corpo_requisicao <- list(
       encode = "json"
   )    
   if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
+    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
   } 
   
   
@@ -1113,8 +1125,7 @@ corpo_requisicao <- list(
   
   
   if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
   }
   
   mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod))
@@ -1131,12 +1142,14 @@ corpo_requisicao <- list(
   
 }
 
-mod_lum_extrai_json_api(nome = "mod_lum",
+if (target_base == "todas" || target_base == "mod_lum") {
+  mod_lum_extrai_json_api(nome = "mod_lum",
                       raiz_1 = "PONTOS_MODERNIZACAO",
                       raiz_2 = "PONTO_MODERNIZACAO",
                       url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/webservice-consultarpontosmodernizacaocompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_PAGE_SIZE=0&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=1"
 )
-print('  Mod Lum - Ok')     
+print('  Mod Lum - Ok')
+}     
 
 
 ###########################################################################################################
