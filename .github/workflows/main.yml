@@ -10,8 +10,8 @@ jobs:
     name: Extração - ${{ matrix.script }}
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 3
       matrix:
-        max-parallel: 3
         script:
           - email_prefeitura.R
           - 'campinas.R Atendimentos'
