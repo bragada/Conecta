@@ -73,8 +73,20 @@ jobs:
         env:
           R_LIBS_USER: ~/.R/library
 
-      - name: Definir variáveis de ambiente do AWS e Google
+      - name: Salvar chave de serviço Google Sheets em sa.json
+        run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
         env:
+          GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
+
+      - name: Salvar chave de serviço Google Drive em sa_drive.json
+        run: echo "${GDRIVE_AUTH}" > sa_drive.json
+        env:
+          GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
+
+      - name: Rodar script email_prefeitura.R
+        run: Rscript email_prefeitura.R || true
+        env:
+          R_LIBS_USER: ~/.R/library
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
@@ -90,37 +102,3 @@ jobs:
           GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
           API_RESEND: ${{ secrets.API_RESEND }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
-        run: |
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
-          echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.Renviron
-          echo "TZ=${TZ}" >> ~/.Renviron
-          echo "USERNAME=${USERNAME}" >> ~/.Renviron
-          echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
-          echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
-          echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
-          echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
-          echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
-          echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
-          echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}" >> ~/.Renviron
-          echo "GDRIVE_AUTH=${GDRIVE_AUTH}" >> ~/.Renviron
-          echo "API_RESEND=${API_RESEND}" >> ~/.Renviron
-          echo "EMAIL_USER=${EMAIL_USER}" >> ~/.Renviron
-
-      - name: Salvar chave de serviço Google Sheets em sa.json
-        run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
-        env:
-          GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
-
-      - name: Salvar chave de serviço Google Drive em sa_drive.json
-        run: echo "${GDRIVE_AUTH}" > sa_drive.json
-        env:
-          GDRIVE_AUTH: ${{ secrets.GDRIVE_AUTH }}
-
-      - name: Rodar script email_prefeitura.R
-        run: Rscript email_prefeitura.R || true
-        env:
-          R_LIBS_USER: ~/.R/library
-          GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}

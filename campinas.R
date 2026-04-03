@@ -27,7 +27,41 @@ if (length(args) == 0) {
   target_base <- args[1]
 }
 
+
 # ATENDIMENTOS
+
+# FUNCAO GENERICA PARA EXTRAIR DADOS DA API EXATI
+exati_fetch_api <- function(nome, url, corpo_requisicao, raiz_1, raiz_2, min_length = 10) {
+  response <- POST(
+    url,
+    add_headers(
+      `Authorization` = credenciais,
+      `Accept-Encoding` = "gzip"
+    ),
+    body = corpo_requisicao,
+    encode = "json"
+  )
+  
+  if (status_code(response) != 200) {
+    stop("Erro ao acessar a API de ", nome, ". Status code: ", status_code(response))
+  }
+  
+  dados <- fromJSON(content(response, "text")) %>% 
+    .[["RAIZ"]] %>%
+    .[[raiz_1]] %>%
+    .[[raiz_2]]
+    
+  if (length(dados) <= min_length) {
+    # Para o caso especial do p_moni (min_length = 0), a gente não dá stop
+    # Mas para as outras, a gente dá.
+    if (min_length > 0) {
+       stop("A base de dados de ", nome, " contém ", min_length, " ou menos observações. Falhando a extração.")
+    }
+  }
+  
+  return(dados)
+}
+
 at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
@@ -36,30 +70,7 @@ at_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         CMD_DATA_INICIO="01/03/2023"
     )
 
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )
-  
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   atendimentos <- dados %>% 
     janitor::clean_names() %>% 
@@ -255,30 +266,7 @@ corpo_requisicao <- list(
  CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
 )
      
- response <- POST(
-    url,
-    add_headers(
-     `Authorization` = credenciais,
-     `Accept-Encoding` = "gzip"
-   ),
-     body = corpo_requisicao,
-     encode = "json"
- )
- 
- if (status_code(response) != 200) {
-   stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
- } 
- 
- 
- dados <- fromJSON(content(response, "text")) %>% 
-   .[["RAIZ"]] %>%
-   .[[raiz_1]] %>%
-   .[[raiz_2]]
- 
- 
- if (length(dados) <= 10) {
-   stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
- }
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
  
  osp <<- dados %>% 
 clean_names() %>% 
@@ -343,30 +331,7 @@ corpo_requisicao <- list(
  CMD_DATA_FIM = format(Sys.Date(), "%d/%m/%Y")
 )
      
- response <- POST(
-    url,
-    add_headers(
-     `Authorization` = credenciais,
-     `Accept-Encoding` = "gzip"
-   ),
-     body = corpo_requisicao,
-     encode = "json"
- )
- 
- if (status_code(response) != 200) {
-   stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
- } 
- 
- 
- dados <- fromJSON(content(response, "text")) %>% 
-   .[["RAIZ"]] %>%
-   .[[raiz_1]] %>%
-   .[[raiz_2]]
- 
- 
- if (length(dados) <= 10) {
-   stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
- }
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
 
 email <<- dados %>% 
 clean_names() %>% 
@@ -419,30 +384,7 @@ corpo_requisicao <- list(
   CMD_DATA_RECLAMACAO = "01/03/2023",
   CMD_APENAS_EM_ABERTO = 0
 )
-   response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )
-  
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 3) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+   dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 3)
   
   #osp <- s3read_using(FUN = arrow::read_parquet,
   #                    object = "tt_osp.parquet",
@@ -530,29 +472,11 @@ p_moni_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
         CMD_APENAS_EM_ABERTO = 0
   )
       
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 0)
   
   if (is.null(dados) || length(dados) == 0) {
-  print("Objeto 'dados' está nulo ou vazio. Seguindo o fluxo.")
-} else {
+    print("Objeto 'dados' está nulo ou vazio. Seguindo o fluxo.")
+  } else {
 
 
     p_moni <- dados %>% 
@@ -629,31 +553,7 @@ corpo_requisicao <- list(
   CMD_ID_PARQUE_SERVICO = 2
 )
       
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-      
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   os <- dados %>% 
     clean_names() %>%
@@ -712,31 +612,7 @@ oa_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
    CMD_PAINEL_NOVO = 1
   )
       
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-  
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   oa <- dados %>% 
     clean_names() %>%
@@ -899,36 +775,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   CMD_MODERNIZACAO = 2,
   CMD_TIPO_CALCULO = 1
 )
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-      
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  #dados <- fromJSON(content( GET('https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs', add_headers(`Accept-Encoding` = "gzip"))
-  #                           , "text")) %>% 
-  #  .[["RAIZ"]] %>%
-  #  .[['PONTOS_MODERNIZACAO']] %>%
-  #  .[['PONTO_MODERNIZACAO']]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+  dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   mod <- dados %>% 
     clean_names() %>% 
@@ -1041,29 +888,7 @@ corpo_requisicao <- list(
   CMD_ID_PARQUE_SERVICO = "1,2"
 )
 
- response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )    
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   obras <- dados %>% 
     clean_names() %>% 
@@ -1104,29 +929,7 @@ corpo_requisicao <- list(
   CMD_TIPO_CALCULO = 1
 )
 
- response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )    
-  if (status_code(response) != 200) {
-    stop("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    stop("A base de dados de ", nome, " contém 10 ou menos observações. Falhando a extração.")
-  }
+ dados <- exati_fetch_api(nome = nome, url = url, corpo_requisicao = corpo_requisicao, raiz_1 = raiz_1, raiz_2 = raiz_2, min_length = 10)
   
   mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod))
   
