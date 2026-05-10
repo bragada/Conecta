@@ -292,8 +292,8 @@ select(
     data_hora_reclamacao,
     data_reclamacao,
     hora_reclamacao,
-    data_atendimento,
-    hora_conclusao,
+    #data_atendimento,
+    #hora_conclusao,
     data_hora_conclusao_atendimento,
     desc_prazo,
     protocolo= numero_protocolo
