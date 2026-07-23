@@ -1,26 +1,18 @@
 #install.packages(c("httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow"))
-#install.packages("base64enc")
-#library(base64enc)
+install.packages("base64enc")
+install.packages("janitor")
 
-#library(httr)
-#library(jsonlite)
-#library(janitor)
-#library(tidyverse)
-#library(aws.s3)
-#library(arrow)
+library(base64enc)
+
+library(httr)
+library(jsonlite)
+library(janitor)
+library(tidyverse)
+library(aws.s3)
+library(arrow)
 
 
-# Lista de pacotes desejados
-pacotes <- c("base64enc", "httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow")
 
-# Verifica quais pacotes não estão instalados
-pacotes_novos <- pacotes[!(pacotes %in% installed.packages()[,"Package"])]
-
-# Se houver pacotes não instalados, instala-os
-if(length(pacotes_novos)) install.packages(pacotes_novos)
-
-# Carrega todos os pacotes da lista
-lapply(pacotes, library, character.only = TRUE)
 
 
 credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
