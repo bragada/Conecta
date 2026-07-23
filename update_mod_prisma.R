@@ -6,7 +6,7 @@ library(googlesheets4)
 library(gargle)
 
 gs4_auth(path = "sa.json")
-install.packages("base64enc")
+# install.packages("base64enc")  # vem da imagem Docker
 library(base64enc)
 
 library(httr)

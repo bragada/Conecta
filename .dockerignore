@@ -1,0 +1,15 @@
+# O Dockerfile não COPIA nada do repo (os scripts chegam via checkout no workflow),
+# então isso serve só para deixar o contexto de build pequeno e rápido.
+.git
+.github
+*.parquet
+*.pdf
+*.tex
+*.html
+*.xlsx
+*.png
+sa.json
+sa_gmail.json
+sa_drive.json
+.Renviron
+Base_Original

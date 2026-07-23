@@ -1,4 +1,4 @@
-install.packages(c("httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow"))
+# install.packages(c("httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow"))  # vem da imagem Docker
 
 library(httr)
 library(jsonlite)

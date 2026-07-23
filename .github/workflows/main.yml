@@ -5,10 +5,23 @@ on:
   schedule:
     - cron: '0 * * * *'
 
+permissions:
+  contents: read
+  packages: read      # necessário para o job puxar a imagem do GHCR
+
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
+    # Roda tudo DENTRO da imagem que já tem R + todos os pacotes instalados.
+    # Sem apt-get, sem install.packages, sem cache -> só puxar a imagem (segundos) e rodar.
+    container:
+      image: ghcr.io/bragada/conecta:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      options: --user root
     strategy:
+      fail-fast: false
       matrix:
         script:
           - email_prefeitura.R
@@ -18,63 +31,9 @@ jobs:
           - update_mod_prisma.R
     steps:
       - name: Configurar repositório
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Configurar cache para pacotes R
-        uses: actions/cache@v3
-        with:
-          path: ~/.R/library
-          key: ${{ runner.os }}-R-package-cache-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-R-
-        env:
-          R_LIBS_USER: ~/.R/library
-
-      - name: Instalar dependências do sistema
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libfreetype6-dev libicu-dev libsodium-dev libpng-dev libtiff5-dev
-
-      - name: Instalar Pandoc
-        run: |
-          sudo apt-get install -y pandoc
-
-      - name: Instalar LaTeX
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-recommended
-
-      - name: Instalar R
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y r-base
-
-      - name: Criar e configurar diretório de bibliotecas R
-        run: |
-          mkdir -p ~/.R/library
-          echo "R_LIBS_USER=~/.R/library" >> ~/.Renviron
-        env:
-          R_LIBS_USER: ~/.R/library
-
-      - name: Reinstalar stringi a partir da fonte
-        run: |
-          Rscript -e 'install.packages("stringi", type = "source")'
-        env:
-          R_LIBS_USER: ~/.R/library
-
-      - name: Reinstalar keyring
-        run: |
-          Rscript -e 'install.packages("keyring")'
-        env:
-          R_LIBS_USER: ~/.R/library
-
-      - name: Instalar pacotes Google Sheets necessários
-        run: |
-          Rscript -e 'install.packages(c("googlesheets4", "gargle"))'
-        env:
-          R_LIBS_USER: ~/.R/library
-
-      - name: Definir variáveis de ambiente do AWS e Google
+      - name: Definir variáveis de ambiente (.Renviron)
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -88,38 +47,36 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
-
+        # Escreve na pasta do checkout (cwd). O R lê ".Renviron" do diretório atual,
+        # o que é mais robusto dentro de container do que depender do HOME.
         run: |
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.Renviron
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.Renviron
-          echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.Renviron
-          echo "TZ=${TZ}" >> ~/.Renviron
-          echo "USERNAME=${USERNAME}" >> ~/.Renviron
-          echo "PASSWORD=${PASSWORD}" >> ~/.Renviron
-          echo "USERNAME_RIB=${USERNAME_RIB}" >> ~/.Renviron
-          echo "PASSWORD_RIB=${PASSWORD_RIB}" >> ~/.Renviron
-          echo "GMAIL_AUTH=${GMAIL_AUTH}" >> ~/.Renviron
-          echo "SMTP_USER=${SMTP_USER}" >> ~/.Renviron
-          echo "SMTP_PASS=${SMTP_PASS}" >> ~/.Renviron
-          echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}" >> ~/.Renviron
+          {
+            echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+            echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+            echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+            echo "TZ=${TZ}"
+            echo "USERNAME=${USERNAME}"
+            echo "PASSWORD=${PASSWORD}"
+            echo "USERNAME_RIB=${USERNAME_RIB}"
+            echo "PASSWORD_RIB=${PASSWORD_RIB}"
+            echo "GMAIL_AUTH=${GMAIL_AUTH}"
+            echo "SMTP_USER=${SMTP_USER}"
+            echo "SMTP_PASS=${SMTP_PASS}"
+            echo "GSHEETS_SERVICE_ACCOUNT_JSON=${GSHEETS_SERVICE_ACCOUNT_JSON}"
+          } >> .Renviron
 
-      - name: Salvar chave de serviço Google Sheets em sa.json
-        run: echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
+      - name: Salvar chaves de serviço (sa.json / sa_gmail.json)
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
-          
-      - name: Salvar chave de serviço GMAIL em sa_gmail.json
-        run: echo "${GMAIL_AUTH}" > sa_gmail.json
-        env:
           GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
-          
+        run: |
+          echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
+          echo "${GMAIL_AUTH}" > sa_gmail.json
+
       - name: Rodar script ${{ matrix.script }}
-        run: Rscript ${{ matrix.script }} || true
+        run: Rscript ${{ matrix.script }}
         env:
-          R_LIBS_USER: ~/.R/library
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
-
-          

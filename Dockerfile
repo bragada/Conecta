@@ -1,15 +1,32 @@
-# Use uma imagem base com Ubuntu
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+# Imagem base "rocker/verse": já vem com R + tidyverse + pandoc + LaTeX (tinytex),
+# tudo instalado como binário (Posit Package Manager) -> build rápido e reproduzível.
+# É o que resolve o relatório em PDF (pdf_document + kableExtra) sem instalar texlive na mão.
+FROM rocker/verse:4.4.1
 
-# Adicionar a chave do CRAN e o repositório para versões mais recentes do R
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
-    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+# Pacotes de sistema extras:
+# - git / ca-certificates: necessários para o actions/checkout rodar dentro do container
+# - libsodium-dev: usado por libs de credenciais/sodium
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        ca-certificates \
+        libsodium-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Atualizar e instalar a versão mais recente do R
-RUN apt update && apt install -y r-base
+# Pacotes R usados pelos scripts agendados.
+# tidyverse / rmarkdown / knitr / tinytex JÁ vêm na imagem base (rocker/verse).
+# install2.r baixa binários do Posit PM (rápido) e compila em paralelo (-n -1 = todos os núcleos).
+RUN install2.r --error --skipinstalled -n -1 \
+        janitor \
+        arrow \
+        aws.s3 \
+        httr \
+        jsonlite \
+        base64enc \
+        googlesheets4 \
+        gargle \
+        kableExtra \
+        zoo
 
-# Instala o pacote pacman para gerenciamento de pacotes
-RUN R -e "install.packages('pacman')"
-
-# Instala os pacotes necessários usando pacman::p_load
-RUN R -e "pacman::p_load(profvis, colourpicker, crosstalk, aws.s3, readxl, leaflet.extras, reactable, reactablefmtr, shinyjs, leaflegend, leaflet, googleway, tippy, shinyWidgets, htmltools, janitor, tidyverse, shiny, DT, shinythemes, waiter, stringr, paletteer, highcharter, readr, reshape2)"
+# Pré-instala os pacotes LaTeX usados pelo relatório (evita baixar no runtime).
+# Se faltar algum, o tinytex baixa sozinho durante o render, então "|| true" não quebra o build.
+RUN R -e "tinytex::tlmgr_install(c('fancyhdr','geometry','booktabs','multirow','makecell','xcolor','colortbl','environ','trimspaces','etoolbox','wrapfig','float','ulem','threeparttable','threeparttablex','pdflscape','varwidth'))" || true
