@@ -1,6 +1,9 @@
 #install.packages(c("httr", "jsonlite", "janitor", "tidyverse", "aws.s3", "arrow"))
 install.packages("base64enc")
 install.packages("janitor")
+install.packages("tidyverse")
+install.packages("aws.s3")
+install.packages("arrow")
 
 library(base64enc)
 
