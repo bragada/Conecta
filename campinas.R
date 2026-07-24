@@ -856,7 +856,7 @@ sgi_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
            ),
            atendimento = as.character(atendimento)
     )  %>%
-    filter(!is.na(hora_atendimento)) %>% 
+    #filter(!is.na(hora_atendimento)) %>% 
     left_join(
      s3read_using(
       FUN = arrow::read_parquet,
