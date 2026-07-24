@@ -27,6 +27,6 @@ RUN install2.r --error --skipinstalled -n -1 \
         kableExtra \
         zoo
 
-# Pré-instala os pacotes LaTeX usados pelo relatório (evita baixar no runtime).
-# Se faltar algum, o tinytex baixa sozinho durante o render, então "|| true" não quebra o build.
-RUN R -e "tinytex::tlmgr_install(c('fancyhdr','geometry','booktabs','multirow','makecell','xcolor','colortbl','environ','trimspaces','etoolbox','wrapfig','float','ulem','threeparttable','threeparttablex','pdflscape','varwidth'))" || true
+# Pré-instala os pacotes LaTeX usados pelo relatório em PDF (kableExtra exige 'tabu', etc.).
+# Sem "|| true": se algum não instalar, queremos ver a falha aqui no build, não no render.
+RUN R -e "tinytex::tlmgr_install(c('fancyhdr','geometry','booktabs','multirow','makecell','xcolor','colortbl','environ','trimspaces','etoolbox','wrapfig','float','ulem','threeparttable','threeparttablex','pdflscape','varwidth','tabu'))"
