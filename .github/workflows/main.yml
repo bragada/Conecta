@@ -75,10 +75,6 @@ jobs:
           printf '%s' "$GSHEETS_SERVICE_ACCOUNT_JSON" > sa.json
           printf '%s' "$GMAIL_AUTH" > sa_gmail.json
 
-      - name: (DIAGNOSTICO TEMPORARIO) Conferir o que ha no sa.json
-        run: |
-          Rscript -e 'tryCatch({j <- jsonlite::fromJSON("sa.json"); cat("type        :", if (is.null(j$type)) "<AUSENTE>" else j$type, "\n"); cat("client_email:", if (is.null(j$client_email)) "<AUSENTE>" else j$client_email, "\n"); cat("project_id  :", if (is.null(j$project_id)) "<AUSENTE>" else j$project_id, "\n"); cat("private_key :", if (is.null(j$private_key)) "<AUSENTE>" else "presente", "\n"); cat("primeiras chaves:", paste(head(names(j),6), collapse=", "), "\n")}, error=function(e) cat("ERRO ao ler sa.json como JSON:", conditionMessage(e), "\n"))'
-
       - name: Rodar script ${{ matrix.script }}
         run: Rscript ${{ matrix.script }}
         env:
