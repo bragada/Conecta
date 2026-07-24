@@ -69,9 +69,11 @@ jobs:
         env:
           GSHEETS_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEETS_SERVICE_ACCOUNT_JSON }}
           GMAIL_AUTH: ${{ secrets.GMAIL_AUTH }}
+        # printf '%s' NAO interpreta os \n dentro da private_key (echo, em alguns
+        # shells, quebraria o JSON). Assim o sa.json sai identico ao secret.
         run: |
-          echo "${GSHEETS_SERVICE_ACCOUNT_JSON}" > sa.json
-          echo "${GMAIL_AUTH}" > sa_gmail.json
+          printf '%s' "$GSHEETS_SERVICE_ACCOUNT_JSON" > sa.json
+          printf '%s' "$GMAIL_AUTH" > sa_gmail.json
 
       - name: (DIAGNOSTICO TEMPORARIO) Conferir o que ha no sa.json
         run: |
