@@ -23,7 +23,62 @@ credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
       base64_enc() %>% 
       paste("Basic", .)
 
-`%!in%` <- Negate(`%in%`) 
+`%!in%` <- Negate(`%in%`)
+
+# ---------------------------------------------------------------------------
+# Leitura robusta das APIs EXATI (paginacao / fatiamento por data).
+# So a LEITURA muda; manipulacao e upload de cada base seguem iguais.
+# A API le os params da QUERY STRING; mandamos na query (e no body, ignorado).
+# ---------------------------------------------------------------------------
+BASE_CAMP <- "https://conectacampinas.exati.com.br/guia/command/conectacampinas/"
+
+.post_exati <- function(path, params) {
+  qs <- paste0(names(params), "=", unlist(params), collapse = "&")
+  POST(paste0(BASE_CAMP, path, "?", qs),
+       add_headers(Authorization = credenciais, `Accept-Encoding` = "gzip"),
+       body = params, encode = "json", timeout(600))
+}
+.no_raiz <- function(resp, raiz) {
+  node <- fromJSON(content(resp, "text", encoding = "UTF-8"))[["RAIZ"]]
+  for (n in raiz) node <- if (is.null(node)) NULL else node[[n]]
+  node
+}
+.para_chr <- function(d) dplyr::mutate(tibble::as_tibble(d), dplyr::across(dplyr::everything(), as.character))
+
+# Paginado por CMD_PAGE (teto ~9.000/pagina) -> junta ate a pagina vir incompleta.
+ler_paginado <- function(path, params, raiz, page = 9000L) {
+  acc <- list(); pg <- 1L; ant <- NULL
+  repeat {
+    r <- .post_exati(path, c(params, CMD_PAGE = pg))
+    if (status_code(r) != 200) break
+    d <- .no_raiz(r, raiz); n <- if (is.null(d)) 0L else nrow(as.data.frame(d))
+    if (n > 0) {
+      df <- .para_chr(d); chave <- paste(df[1, ], collapse = "|")
+      if (pg > 1 && identical(chave, ant)) break   # CMD_PAGE ignorado -> para
+      ant <- chave; acc[[length(acc) + 1]] <- df
+    }
+    if (n < page) break
+    pg <- pg + 1L
+  }
+  if (!length(acc)) return(NULL)
+  dplyr::distinct(dplyr::bind_rows(acc))
+}
+
+# Fatiamento por data (teto ~10.000/consulta) -> divide [ini,fim] ao meio recursivo.
+ler_por_data <- function(path, params, raiz, ini, fim, par_ini, par_fim, cap = 10000L) {
+  fmt <- function(d) format(d, "%d/%m/%Y")
+  jan <- function(a, b) {
+    r <- .post_exati(path, c(params, setNames(list(fmt(a), fmt(b)), c(par_ini, par_fim))))
+    d <- if (status_code(r) == 200) .no_raiz(r, raiz) else NULL
+    n <- if (is.null(d)) 0L else nrow(as.data.frame(d))
+    if (n >= cap && a < b) { m <- a + floor(as.numeric(b - a) / 2); return(dplyr::bind_rows(jan(a, m), jan(m + 1, b))) }
+    if (n == 0) return(NULL)
+    .para_chr(d)
+  }
+  out <- jan(as.Date(ini), as.Date(fim))
+  if (is.null(out) || !nrow(out)) return(NULL)
+  dplyr::distinct(out)
+}
 
 
 # ATENDIMENTOS
@@ -620,33 +675,11 @@ print(' Painel Monitoramento - Ok')
 os_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
 
-corpo_requisicao <- list(
-  CMD_ID_STATUS_ORDEM_SERVICO = -1,
-  CMD_DATA_INICIAL = "01/01/2023",
-  CMD_ID_PARQUE_SERVICO = 2
-)
-      
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-      
-  if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  dados <- ler_por_data("Ordensdeservico.json",
+    list(CMD_IDS_PARQUE_SERVICO = "2", CMD_ID_STATUS_ORDEM_SERVICO = "-1"),
+    c(raiz_1, raiz_2),
+    ini = "2023-01-01", fim = Sys.Date(),
+    par_ini = "CMD_DATA_INICIAL", par_fim = "CMD_DATA_FINAL", cap = 10000L)
   
   
   if (length(dados) <= 10) {
@@ -890,32 +923,9 @@ print('ATENDIMENTO QUANTO AO PRAZO  - Ok')
 # PONTOS MODERNIZADOS -----
 mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
-  corpo_requisicao <- list(
-  CMD_PARQUE_SERVICO = 2,
-  CMD_MODERNIZACAO = 2,
-  CMD_TIPO_CALCULO = 1
-)
-  response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )  
-
-      
-  if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  dados <- ler_paginado("ConsultarPontosModernizacaoCompleto.json",
+    list(CMD_IDS_PARQUE_SERVICO = "2", CMD_MODERNIZACAO = "3"),
+    c(raiz_1, raiz_2))
   #dados <- fromJSON(content( GET('https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs', add_headers(`Accept-Encoding` = "gzip"))
   #                           , "text")) %>% 
   #  .[["RAIZ"]] %>%
@@ -1094,31 +1104,9 @@ print('  Obras - Ok')
                        # OBRAS ----
 mod_lum_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
-corpo_requisicao <- list(
-  CMD_PARQUE_SERVICO = 2,
-  CMD_MODERNIZACAO = 2,
-  CMD_TIPO_CALCULO = 1
-)
-
- response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )    
-  if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
+  dados <- ler_paginado("ConsultarPontosModernizacaoCompleto.json",
+    list(CMD_IDS_PARQUE_SERVICO = "2", CMD_MODERNIZACAO = "3"),
+    c(raiz_1, raiz_2))
   
   
   if (length(dados) <= 10) {
