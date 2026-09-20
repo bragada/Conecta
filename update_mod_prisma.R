@@ -1,102 +1,62 @@
-if (!requireNamespace("aws.s3", quietly = TRUE)) install.packages("aws.s3")
-if (!requireNamespace("googlesheets4", quietly = TRUE)) install.packages("googlesheets4")
-if (!requireNamespace("httr", quietly = TRUE)) install.packages("googlesheets4")
+# Atualiza a planilha `historico_mod_pontos_luminosos` (id_ponto_servico -> potencia_total).
+# Le do S3, nao da API -- ver o comentario em atualiza_prisma() abaixo.
+# Pacotes vem da imagem Docker (ghcr.io/bragada/conecta) -> nao instalar em runtime.
 
 library(googlesheets4)
 library(gargle)
-
-gs4_auth(path = "sa.json")
-# install.packages("base64enc")  # vem da imagem Docker
-library(base64enc)
-
-library(httr)
-library(jsonlite)
-library(janitor)
 library(tidyverse)
 library(aws.s3)
 library(arrow)
 
-
-credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
-      base64_enc() %>% 
-      paste("Basic", .)
-
-`%!in%` <- Negate(`%in%`) 
-
+gs4_auth(path = "sa.json")
 
 
 ########################################################################################
-mod_lum_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
+# Fonte: o parquet que o campinas.R ja grava no S3 -- nao a API.
+#
+# Por que mudou: a URL que este script usava (alias `webservice-consultarpontos
+# modernizacaocompleto.json`) IGNORA o CMD_MODERNIZACAO e trava em filtro=2 ->
+# devolve 0 linhas. Medido em 20/09/2026: HTTP 200, RESULT=1, zero registros.
+# Como o erro nao aparece no status code, o script caia no guard de <=10 linhas e
+# saia sem escrever nada: a planilha ficou parada desde 06/07/2026, em silencio.
+#
+# Ler o tt_mod_lum.parquet resolve e ainda evita pagar um segundo pull de ~18 min
+# na API -- e exatamente a mesma base, gravada pelo campinas.R na mesma run.
+atualiza_prisma <- function(objeto = "tt_mod_lum.parquet",
+                            bucket = "automacao-conecta",
+                            gsheet_url = "https://docs.google.com/spreadsheets/d/14wp-xTzqIonTzw6Y1sIq1BCffqOEfe45GIawx15ak5Q/edit") {
 
-corpo_requisicao <- list(
-  CMD_PARQUE_SERVICO = 2,
-  CMD_MODERNIZACAO = 2,
-  CMD_TIPO_CALCULO = 1
-)
+  dados <- tryCatch(
+    aws.s3::s3read_using(FUN = arrow::read_parquet, object = objeto, bucket = bucket),
+    error = function(e) { message("Falha ao ler ", objeto, " do S3: ", conditionMessage(e)); NULL })
 
- response <- POST(
-     url,
-     add_headers(
-      `Authorization` = credenciais,
-      `Accept-Encoding` = "gzip"
-    ),
-      body = corpo_requisicao,
-      encode = "json"
-  )    
-  if (status_code(response) != 200) {
-    message("Erro ao acessar a API de ",nome ,". Status code: ", status_code(response))
-    return(NULL)
-  } 
-  
-  
-  dados <- fromJSON(content(response, "text")) %>% 
-    .[["RAIZ"]] %>%
-    .[[raiz_1]] %>%
-    .[[raiz_2]]
-  
-  
-  if (length(dados) <= 10) {
-    message("A base de dados contém 10 ou menos observações. Não será feito o upload.")
-    return(NULL)
+  if (is.null(dados) || nrow(dados) <= 10) {
+    message("Base vazia ou indisponivel -> planilha NAO sera atualizada.")
+    return(invisible(NULL))
+  }
+  if (!all(c("potencia_lampada_atual", "id_ponto_servico") %in% names(dados))) {
+    message("Colunas esperadas ausentes em ", objeto, " -> planilha NAO sera atualizada.")
+    return(invisible(NULL))
   }
 
-
-      
-  mod_lum <- dados %>% 
-    clean_names() %>% 
-    select(potencia_lampada_atual,id_ponto_servico) %>% 
-    group_by(id_ponto_servico) %>% 
+  mod_lum <- dados %>%
+    select(potencia_lampada_atual, id_ponto_servico) %>%
+    group_by(id_ponto_servico) %>%
     mutate(
-        potencia_total = potencia_lampada_atual %>% 
+        potencia_total = potencia_lampada_atual %>%
             # Substitui vírgula por ponto (caso existam decimais no padrão PT-BR)
-            str_replace_all(",", ".") %>% 
+            str_replace_all(",", ".") %>%
             # Divide a string pelo separador ";"
-            str_split(";") %>% 
+            str_split(";") %>%
             # Converte para numérico e soma (map_dbl garante que o resultado seja um número)
             map_dbl(~ sum(as.numeric(.x), na.rm = TRUE))
-    ) %>% 
-    ungroup() %>% 
-    distinct(id_ponto_servico,potencia_total)
-  
-  
-  
-  # UPLOAD SHEET
-  gsheet_url <- "[https://docs.google.com/spreadsheets/d/14wp-xTzqIonTzw6Y1sIq1BCffqOEfe45GIawx15ak5Q/edit?gid=0#gid=0]"
-  
-  # Autenticação (se necessário)
-  # gs4_auth(email = "seu-email@gmail.com")
-  
-  # Escrever os dados na planilha do Google Sheets
+    ) %>%
+    ungroup() %>%
+    distinct(id_ponto_servico, potencia_total)
+
+  message("prisma: ", nrow(mod_lum), " pontos -> ", gsheet_url)
   sheet_write(mod_lum, gsheet_url, sheet = "id_ponto_servico")
-  
 }
 
-mod_lum_extrai_json_api(nome = "mod_lum",
-                      raiz_1 = "PONTOS_MODERNIZACAO",
-                      raiz_2 = "PONTO_MODERNIZACAO",
-                      url = "https://conectacampinas.exati.com.br/guia/command/conectacampinas/webservice-consultarpontosmodernizacaocompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_PAGE_SIZE=0&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=1"
-)
-print('  Mod Lum - Ok')     
-
-
-
+atualiza_prisma()
+print('  Mod Lum (prisma) - Ok')
