@@ -32,11 +32,19 @@ credenciais <- paste0(Sys.getenv("USERNAME"), ":", Sys.getenv("PASSWORD")) %>%
 # ---------------------------------------------------------------------------
 BASE_CAMP <- "https://conectacampinas.exati.com.br/guia/command/conectacampinas/"
 
-.post_exati <- function(path, params) {
+# Tenta ate `tent` vezes: consultas grandes devolvem 502/timeout esporadico, e
+# uma falha silenciosa aqui vira base incompleta no S3. Devolve NULL se desistir.
+.post_exati <- function(path, params, tent = 3L) {
   qs <- paste0(names(params), "=", unlist(params), collapse = "&")
-  POST(paste0(BASE_CAMP, path, "?", qs),
-       add_headers(Authorization = credenciais, `Accept-Encoding` = "gzip"),
-       body = params, encode = "json", timeout(600))
+  u  <- paste0(BASE_CAMP, path, "?", qs)
+  for (i in seq_len(tent)) {
+    r <- tryCatch(POST(u, add_headers(Authorization = credenciais, `Accept-Encoding` = "gzip"),
+                       body = params, encode = "json", timeout(300)),
+                  error = function(e) e)
+    if (!inherits(r, "error") && status_code(r) == 200) return(r)
+    if (i < tent) Sys.sleep(5 * i)
+  }
+  NULL
 }
 .no_raiz <- function(resp, raiz) {
   node <- fromJSON(content(resp, "text", encoding = "UTF-8"))[["RAIZ"]]
@@ -45,23 +53,88 @@ BASE_CAMP <- "https://conectacampinas.exati.com.br/guia/command/conectacampinas/
 }
 .para_chr <- function(d) dplyr::mutate(tibble::as_tibble(d), dplyr::across(dplyr::everything(), as.character))
 
-# Paginado por CMD_PAGE (teto ~9.000/pagina) -> junta ate a pagina vir incompleta.
-ler_paginado <- function(path, params, raiz, page = 9000L) {
-  acc <- list(); pg <- 1L; ant <- NULL
-  repeat {
-    r <- .post_exati(path, c(params, CMD_PAGE = pg))
-    if (status_code(r) != 200) break
-    d <- .no_raiz(r, raiz); n <- if (is.null(d)) 0L else nrow(as.data.frame(d))
-    if (n > 0) {
-      df <- .para_chr(d); chave <- paste(df[1, ], collapse = "|")
-      if (pg > 1 && identical(chave, ant)) break   # CMD_PAGE ignorado -> para
-      ant <- chave; acc[[length(acc) + 1]] <- df
-    }
-    if (n < page) break
-    pg <- pg + 1L
+# Pontos modernizados: leitura por JANELA DE DATA (nao por CMD_PAGE).
+#
+# Por que nao CMD_PAGE: a ordenacao do servidor nao e estavel entre paginas.
+# Medido em 19/09/2026 -> pg1 = ids 139798..149532, pg2 = 149533..159203 (ok,
+# por id crescente), pg3 = 130095..271717 (embaralha). Dai em diante as paginas
+# se sobrepoem, e o distinct() no fim colapsava ~117k linhas baixadas em 68.681
+# unicas. Foi assim que tt_mod_materiais caiu de ~116k para 68.681 sem erro.
+#
+# A janela de data independe da ordenacao: CMD_DATA_INICIO/CMD_DATA_FIM trazem
+# os pontos cujo intervalo [primeira mod, ultima mod] intersecta a janela.
+# Ladrilhando o calendario mes a mes, todo ponto cai em pelo menos uma janela
+# (os poucos com mais de uma modernizacao aparecem em duas -> distinct()).
+# Teto de ~9.000 por consulta -> divide a janela ao meio.
+#
+# Validado em 19/09/2026: 57 chamadas, 0 falhas, 116.762 pontos unicos, e os
+# 68.681 que estavam no S3 continuam todos presentes (superconjunto estrito).
+# Custo: ~18 min de leitura (antes ~6 min, incompletos).
+
+# tt_mod_materiais e tt_mod_lum fazem exatamente a mesma consulta; sem o cache
+# o script pagaria esses ~18 min duas vezes na mesma run.
+.cache_mod <- new.env(parent = emptyenv())
+
+ler_modernizados <- function(path, params, raiz, ini = as.Date("2023-01-01"), cap = 9000L) {
+  chave <- paste(path, paste(names(params), unlist(params), sep = "=", collapse = "&"),
+                 paste(raiz, collapse = "/"), ini, cap, sep = "|")
+  if (!is.null(.cache_mod[[chave]])) {
+    message("modernizados: reaproveitando leitura ja feita nesta run.")
+    return(.cache_mod[[chave]])
   }
-  if (!length(acc)) return(NULL)
-  dplyr::distinct(dplyr::bind_rows(acc))
+  fmt <- function(d) format(d, "%d/%m/%Y")
+  acc <- list(); falhou <- FALSE
+  jan <- function(a, b) {
+    if (falhou) return(invisible())
+    r <- .post_exati(path, c(params, CMD_DATA_INICIO = fmt(a), CMD_DATA_FIM = fmt(b)))
+    if (is.null(r)) {
+      falhou <<- TRUE
+      message("EXATI nao respondeu na janela ", fmt(a), "..", fmt(b), " -> leitura abortada (nada sobe).")
+      return(invisible())
+    }
+    d <- .no_raiz(r, raiz); n <- if (is.null(d)) 0L else nrow(as.data.frame(d))
+    if (n >= cap && a < b) {
+      m <- a + floor(as.numeric(b - a) / 2)
+      jan(a, m); jan(m + 1, b); return(invisible())
+    }
+    if (n >= cap && a == b)
+      message("ATENCAO: ", fmt(a), " bateu no teto de ", cap, " num unico dia -> pode faltar dado nesse dia.")
+    if (n > 0) acc[[length(acc) + 1]] <<- .para_chr(d)
+  }
+  bordas <- seq(ini, as.Date(format(Sys.Date(), "%Y-%m-01")), by = "month")
+  for (k in seq_along(bordas))
+    jan(bordas[k], if (k < length(bordas)) bordas[k + 1] - 1 else Sys.Date())
+  if (falhou || !length(acc)) return(NULL)
+  out <- dplyr::distinct(dplyr::bind_rows(acc))
+  .cache_mod[[chave]] <- out
+  out
+}
+
+# Sobe pro S3 so se a base nova nao encolheu de forma suspeita frente a que ja
+# esta la. O guard antigo (<= 10 linhas) deixou passar semanas de base pela
+# metade; queda grande agora cancela o upload e preserva a copia boa.
+#
+# USAR SO EM BASE CUMULATIVA -- historico que so cresce: atendimentos,
+# solicitacoes, ordens de servico, modernizados. Nessas, queda grande e sempre
+# defeito de leitura, nunca o dado real.
+#
+# NAO USAR EM BASE DE SNAPSHOT -- foto do estado atual, como o painel de
+# monitoramento (tt_painel_monitoramento): ali encolher e resultado legitimo
+# (menos ocorrencia em aberto = menos linha) e o guard barraria atualizacao
+# correta. Por isso ele e opt-in: as demais bases seguem com put_object direto.
+sobe_s3 <- function(df, objeto, tolerancia = 0.10) {
+  ant <- tryCatch(aws.s3::s3read_using(FUN = arrow::read_parquet, object = objeto,
+                                       bucket = "automacao-conecta"),
+                  error = function(e) NULL)
+  if (!is.null(ant) && nrow(df) < nrow(ant) * (1 - tolerancia)) {
+    message("ATENCAO: ", objeto, " viria com ", nrow(df), " linhas contra ", nrow(ant),
+            " no S3 (queda de ", round(100 * (1 - nrow(df) / nrow(ant))), "%). Upload CANCELADO.")
+    return(invisible(FALSE))
+  }
+  arrow::write_parquet(df, objeto)
+  put_object(file = objeto, object = objeto, bucket = "automacao-conecta", region = "sa-east-1")
+  message(objeto, ": ", nrow(df), " linhas enviadas.")
+  invisible(TRUE)
 }
 
 # Fatiamento por data (teto ~10.000/consulta) -> divide [ini,fim] ao meio recursivo.
@@ -923,7 +996,7 @@ print('ATENDIMENTO QUANTO AO PRAZO  - Ok')
 # PONTOS MODERNIZADOS -----
 mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
   
-  dados <- ler_paginado("ConsultarPontosModernizacaoCompleto.json",
+  dados <- ler_modernizados("ConsultarPontosModernizacaoCompleto.json",
     list(CMD_IDS_PARQUE_SERVICO = "2", CMD_MODERNIZACAO = "3"),
     c(raiz_1, raiz_2))
   #dados <- fromJSON(content( GET('https://conectacampinas.exati.com.br/guia/command/conectacampinas/ConsultarPontosModernizacaoCompleto.json?CMD_IDS_PARQUE_SERVICO=2&CMD_MODERNIZACAO=2&CMD_TIPO_CALCULO=0&auth_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnaW92YW5uYS5hbmRyYWRlQGV4YXRpLmNvbS5iciIsImp0aSI6IjMxOCIsImlhdCI6MTcyNjcwMzY5Nywib3JpZ2luIjoiR1VJQS1TRVJWSUNFIn0.N-NFG7oJSzfzhyApzR9VB5P0AqSmDd_CqZrAEtlZsEs', add_headers(`Accept-Encoding` = "gzip"))
@@ -1018,14 +1091,7 @@ mod_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
       eficient = ifelse(pot_old == 0,-1,round(1-(pot_new/pot_old),1))) 
   
   
-  arrow::write_parquet(mod, "tt_mod_materiais.parquet")
-  
-  put_object(
-    file = "tt_mod_materiais.parquet",
-    object = "tt_mod_materiais.parquet",
-    bucket = "automacao-conecta",
-    region = 'sa-east-1'
-  )
+  sobe_s3(mod, "tt_mod_materiais.parquet")
   
 }
 
@@ -1104,7 +1170,7 @@ print('  Obras - Ok')
                        # OBRAS ----
 mod_lum_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
 
-  dados <- ler_paginado("ConsultarPontosModernizacaoCompleto.json",
+  dados <- ler_modernizados("ConsultarPontosModernizacaoCompleto.json",
     list(CMD_IDS_PARQUE_SERVICO = "2", CMD_MODERNIZACAO = "3"),
     c(raiz_1, raiz_2))
   
@@ -1114,17 +1180,13 @@ mod_lum_extrai_json_api <- function(nome,url,raiz_1,raiz_2){
     return(NULL)
   }
   
-  mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod))
+  # A API devolve DD/MM/YYYY. Sem o format, as.Date() tenta %Y-%m-%d e %Y/%m/%d e
+  # le "31/12/2025" como 0031-12-20 (ano <- dia, dia <- "20" do ano) -- silencioso.
+  # Mesmo format que mod_extrai_json_api ja usa sobre este mesmo campo.
+  mod_lum <- dados %>% clean_names() %>% mutate(data_mod = as.Date(data_ultima_mod, "%d/%m/%Y"))
   
   
-  arrow::write_parquet(mod_lum, "tt_mod_lum.parquet")
-  
-  put_object(
-    file = "tt_mod_lum.parquet",
-    object = "tt_mod_lum.parquet",
-    bucket = "automacao-conecta",
-    region = 'sa-east-1'
-  )
+  sobe_s3(mod_lum, "tt_mod_lum.parquet")
   
 }
 
