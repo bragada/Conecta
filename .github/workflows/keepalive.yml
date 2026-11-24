@@ -1,0 +1,49 @@
+name: Keepalive
+
+# Em repositório PÚBLICO o GitHub desliga sozinho os workflows com `schedule`
+# depois de 60 dias sem atividade no repo (estado "disabled_inactivity").
+# Foi o que parou a "Conecta" em 19/11/2026 (último commit na main: 20/09/2026).
+#
+# Este workflow roda 1x por dia e, SE o último commit da main tiver mais de
+# LIMITE_DIAS, faz um commit vazio. O commit conta como atividade e zera o prazo
+# de 60 dias de TODOS os workflows agendados (inclusive este).
+# Commits feitos com o GITHUB_TOKEN não disparam outros workflows
+# (o build-image.yml não roda por causa dele).
+
+on:
+  schedule:
+    - cron: '23 9 * * *'   # 06:23 em Brasília, fora do pico do início da hora
+  workflow_dispatch:
+
+permissions:
+  contents: write   # necessário para dar push do commit vazio
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    env:
+      LIMITE_DIAS: 45   # bem antes dos 60 dias do GitHub
+    steps:
+      - name: Checkout da main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Commit vazio se a main estiver parada há mais de ${{ env.LIMITE_DIAS }} dias
+        run: |
+          ultimo=$(git log -1 --format=%ct)
+          agora=$(date +%s)
+          dias=$(( (agora - ultimo) / 86400 ))
+          echo "Último commit na main há ${dias} dia(s)."
+          if [ "$dias" -lt "$LIMITE_DIAS" ]; then
+            echo "Nada a fazer."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "keepalive: evita que o GitHub desligue os workflows agendados (main parada há ${dias} dias)"
+          git push origin HEAD:main
