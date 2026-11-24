@@ -3,7 +3,11 @@ name: Conecta
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
+    # Minuto 17, não 0: o início da hora é o pico do GitHub Actions e boa parte
+    # dos disparos em '0 * * * *' era descartada (só 3–6 runs/dia em out–nov/2026).
+    # Um run leva ~22 min, então o das 11:17 UTC ainda termina dentro da janela
+    # "T11:" que o email_prefeitura.yml exige.
+    - cron: '17 * * * *'
 
 permissions:
   contents: read
